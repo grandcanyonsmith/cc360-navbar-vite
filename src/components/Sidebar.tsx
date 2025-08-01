@@ -3,72 +3,16 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   ChevronRightIcon, 
-  ChevronDownIcon,
-  ChevronUpIcon,
   Bars3Icon,
   XMarkIcon,
   MagnifyingGlassIcon,
-  UserCircleIcon,
   HomeIcon,
-  ChatBubbleLeftRightIcon,
-  CalendarIcon,
-  UserGroupIcon,
-  CurrencyDollarIcon,
-  CreditCardIcon,
   MegaphoneIcon,
-  CogIcon,
   AcademicCapIcon,
-  DocumentTextIcon,
-  PhotoIcon,
-  CubeIcon,
   ChartBarIcon,
-  PuzzlePieceIcon,
-  SparklesIcon,
-  BuildingOfficeIcon,
   Cog6ToothIcon,
-  PhoneIcon,
-  EnvelopeIcon,
-  ChatBubbleBottomCenterTextIcon,
   GlobeAltIcon,
-  ArrowPathIcon,
-  TagIcon,
-  ClipboardDocumentListIcon,
-  PaintBrushIcon,
-  BuildingStorefrontIcon
 } from '@heroicons/react/24/outline'
-import { 
-  ChevronRightIcon as ChevronRightIconMini,
-  Bars3Icon as Bars3IconMini,
-  XMarkIcon as XMarkIconMini,
-  MagnifyingGlassIcon as MagnifyingGlassIconMini,
-  UserCircleIcon as UserCircleIconMini,
-  HomeIcon as HomeIconMini,
-  ChatBubbleLeftRightIcon as ChatBubbleLeftRightIconMini,
-  CalendarIcon as CalendarIconMini,
-  UserGroupIcon as UserGroupIconMini,
-  CurrencyDollarIcon as CurrencyDollarIconMini,
-  CreditCardIcon as CreditCardIconMini,
-  MegaphoneIcon as MegaphoneIconMini,
-  CogIcon as CogIconMini,
-  AcademicCapIcon as AcademicCapIconMini,
-  DocumentTextIcon as DocumentTextIconMini,
-  PhotoIcon as PhotoIconMini,
-  CubeIcon as CubeIconMini,
-  ChartBarIcon as ChartBarIconMini,
-  PuzzlePieceIcon as PuzzlePieceIconMini,
-  SparklesIcon as SparklesIconMini,
-  BuildingOfficeIcon as BuildingOfficeIconMini,
-  Cog6ToothIcon as Cog6ToothIconMini,
-  PhoneIcon as PhoneIconMini,
-  EnvelopeIcon as EnvelopeIconMini,
-  ChatBubbleBottomCenterTextIcon as ChatBubbleBottomCenterTextIconMini,
-  GlobeAltIcon as GlobeAltIconMini,
-  ArrowPathIcon as ArrowPathIconMini,
-  TagIcon as TagIconMini,
-  ClipboardDocumentListIcon as ClipboardDocumentListIconMini,
-  PaintBrushIcon as PaintBrushIconMini,
-  BuildingStorefrontIcon as BuildingStorefrontIconMini
-} from '@heroicons/react/20/solid'
 import SettingsMenu from './SettingsMenu'
 
 interface NavItem {
@@ -191,9 +135,6 @@ export default function Sidebar() {
       setSidebarCollapsed(false)
     }
   }
-
-  // Determine if we should use mini icons (mobile or collapsed)
-  const useMiniIcons = sidebarCollapsed
 
   return (
     <motion.div 
@@ -370,7 +311,7 @@ export default function Sidebar() {
                                   transition={{ duration: 0.15 }}
                                 >
                                   <DisclosurePanel as="ul" className="mt-1 space-y-1 pl-8">
-                                    {item.children.map((subItem) => (
+                                    {item.children?.map((subItem) => (
                                       <li key={subItem.name}>
                                         <a
                                           href={subItem.href}
@@ -416,7 +357,7 @@ export default function Sidebar() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <SettingsMenu onGoBack={handleGoBack} useMiniIcons={useMiniIcons} />
+            <SettingsMenu onGoBack={handleGoBack} />
           </motion.div>
         )}
       </AnimatePresence>

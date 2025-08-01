@@ -1,6 +1,5 @@
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
-import { ArrowLeftIcon as ArrowLeftIconMini } from '@heroicons/react/20/solid'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 interface SettingsSection {
   title: string;
@@ -16,7 +15,6 @@ interface SettingsSection {
 
 interface SettingsMenuProps {
   onGoBack: () => void;
-  useMiniIcons?: boolean;
 }
 
 const settingsSections: SettingsSection[] = [
@@ -114,7 +112,7 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function SettingsMenu({ onGoBack, useMiniIcons = false }: SettingsMenuProps) {
+export default function SettingsMenu({ onGoBack }: SettingsMenuProps) {
   return (
     <>
       {/* Settings Header */}
