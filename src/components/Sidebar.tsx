@@ -99,6 +99,7 @@ export default function Sidebar() {
     return window.matchMedia('(prefers-color-scheme: dark)').matches
   })
   const [activeMenuItem, setActiveMenuItem] = useState('Dashboard')
+  const [activeSettingsItem, setActiveSettingsItem] = useState('')
   const sidebarRef = useRef<HTMLDivElement>(null)
 
   const handleSidebarToggle = () => {
@@ -426,7 +427,12 @@ export default function Sidebar() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <SettingsMenu onGoBack={handleGoBack} isDarkMode={isDarkMode} />
+            <SettingsMenu 
+              onGoBack={handleGoBack} 
+              isDarkMode={isDarkMode}
+              activeSettingsItem={activeSettingsItem}
+              setActiveSettingsItem={setActiveSettingsItem}
+            />
           </motion.div>
         )}
       </AnimatePresence>
@@ -446,11 +452,7 @@ export default function Sidebar() {
                 : 'flex items-center gap-x-3 w-full px-3 py-2 rounded-md transition-colors'
             )}
             title="Settings"
-            whileTap={{ scale: 0.95 }}
-            animate={{ 
-              rotate: showSettings ? 180 : 0 
-            }}
-            transition={{ duration: 0.2 }}
+                                    whileTap={{ scale: 0.95 }}
           >
             <Cog6ToothIcon className="h-5 w-5 shrink-0" />
             <AnimatePresence>

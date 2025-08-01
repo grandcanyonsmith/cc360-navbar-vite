@@ -3,60 +3,61 @@ import { motion } from 'framer-motion'
 
 interface SettingsSection {
   title: string;
-  items: { 
-    name: string; 
-    href: string; 
+  items: {
+    name: string;
+    href: string;
     current?: boolean;
     isNew?: boolean;
     icon?: React.ComponentType<{ className?: string }>;
-    iconMini?: React.ComponentType<{ className?: string }>;
   }[];
 }
 
 interface SettingsMenuProps {
   onGoBack: () => void;
   isDarkMode?: boolean;
+  activeSettingsItem: string;
+  setActiveSettingsItem: (item: string) => void;
 }
 
 const settingsSections: SettingsSection[] = [
   {
     title: 'MY BUSINESS',
     items: [
-      { name: 'Business Profile', href: '#business-profile', icon: BuildingOfficeIcon, iconMini: BuildingOfficeIconMini },
-      { name: 'Billing', href: '#billing', icon: CreditCardIcon, iconMini: CreditCardIconMini },
-      { name: 'My Staff', href: '#staff', icon: UserGroupIcon, iconMini: UserGroupIconMini },
-      { name: 'Opportunities & Pipelines', href: '#pipelines', icon: ChartBarIcon, iconMini: ChartBarIconMini },
+      { name: 'Business Profile', href: '#business-profile', icon: BuildingOfficeIcon },
+      { name: 'Billing', href: '#billing', icon: CreditCardIcon },
+      { name: 'My Staff', href: '#staff', icon: UserGroupIcon },
+      { name: 'Opportunities & Pipelines', href: '#pipelines', icon: ChartBarIcon },
     ],
   },
   {
     title: 'BUSINESS SERVICES',
     items: [
-      { name: 'Automation', href: '#automation-settings', icon: CogIcon, iconMini: CogIconMini },
-      { name: 'Calendars', href: '#calendars-settings', icon: CalendarIcon, iconMini: CalendarIconMini },
-      { name: 'Conversation AI', href: '#conversation-ai', icon: ChatBubbleLeftRightIcon, iconMini: ChatBubbleLeftRightIconMini, isNew: true },
-      { name: 'Knowledge Base', href: '#knowledge-base', icon: DocumentTextIcon, iconMini: DocumentTextIconMini, isNew: true },
-      { name: 'Voice AI Agents', href: '#voice-ai', icon: SparklesIcon, iconMini: SparklesIconMini },
-      { name: 'Email Services', href: '#email-services', icon: EnvelopeIcon, iconMini: EnvelopeIconMini },
-      { name: 'Phone Numbers', href: '#phone-numbers', icon: PhoneIcon, iconMini: PhoneIconMini },
-      { name: 'WhatsApp', href: '#whatsapp', icon: ChatBubbleBottomCenterTextIcon, iconMini: ChatBubbleBottomCenterTextIconMini },
+      { name: 'Automation', href: '#automation-settings', icon: CogIcon },
+      { name: 'Calendars', href: '#calendars-settings', icon: CalendarIcon },
+      { name: 'Conversation AI', href: '#conversation-ai', icon: ChatBubbleLeftRightIcon, isNew: true },
+      { name: 'Knowledge Base', href: '#knowledge-base', icon: DocumentTextIcon, isNew: true },
+      { name: 'Voice AI Agents', href: '#voice-ai', icon: SparklesIcon },
+      { name: 'Email Services', href: '#email-services', icon: EnvelopeIcon },
+      { name: 'Phone Numbers', href: '#phone-numbers', icon: PhoneIcon },
+      { name: 'WhatsApp', href: '#whatsapp', icon: ChatBubbleBottomCenterTextIcon },
     ],
   },
   {
     title: 'OTHER SETTINGS',
     items: [
-      { name: 'Objects', href: '#objects', icon: CubeIcon, iconMini: CubeIconMini, isNew: true },
-      { name: 'Custom Fields', href: '#custom-fields', icon: TagIcon, iconMini: TagIconMini },
-      { name: 'Custom Values', href: '#custom-values', icon: TagIcon, iconMini: TagIconMini },
-      { name: 'Manage Scoring', href: '#scoring', icon: ChartBarIcon, iconMini: ChartBarIconMini },
-      { name: 'Domains', href: '#domains', icon: GlobeAltIcon, iconMini: GlobeAltIconMini },
-      { name: 'URL Redirects', href: '#redirects', icon: ArrowPathIcon, iconMini: ArrowPathIconMini },
-      { name: 'Integrations', href: '#integrations', icon: PuzzlePieceIcon, iconMini: PuzzlePieceIconMini },
-      { name: 'Private Integrations', href: '#private-integrations', icon: PuzzlePieceIcon, iconMini: PuzzlePieceIconMini },
-      { name: 'Conversation Providers', href: '#conversation-providers', icon: ChatBubbleLeftRightIcon, iconMini: ChatBubbleLeftRightIconMini },
-      { name: 'Tags', href: '#tags', icon: TagIcon, iconMini: TagIconMini },
-      { name: 'Audit Logs', href: '#audit-logs', icon: ClipboardDocumentListIcon, iconMini: ClipboardDocumentListIconMini },
-      { name: 'Brand Boards', href: '#brand-boards', icon: PaintBrushIcon, iconMini: PaintBrushIconMini, isNew: true },
-      { name: 'Companies', href: '#companies', icon: BuildingStorefrontIcon, iconMini: BuildingStorefrontIconMini },
+      { name: 'Objects', href: '#objects', icon: CubeIcon, isNew: true },
+      { name: 'Custom Fields', href: '#custom-fields', icon: TagIcon },
+      { name: 'Custom Values', href: '#custom-values', icon: TagIcon },
+      { name: 'Manage Scoring', href: '#scoring', icon: ChartBarIcon },
+      { name: 'Domains', href: '#domains', icon: GlobeAltIcon },
+      { name: 'URL Redirects', href: '#redirects', icon: ArrowPathIcon },
+      { name: 'Integrations', href: '#integrations', icon: PuzzlePieceIcon },
+      { name: 'Private Integrations', href: '#private-integrations', icon: PuzzlePieceIcon },
+      { name: 'Conversation Providers', href: '#conversation-providers', icon: ChatBubbleLeftRightIcon },
+      { name: 'Tags', href: '#tags', icon: TagIcon },
+      { name: 'Audit Logs', href: '#audit-logs', icon: ClipboardDocumentListIcon },
+      { name: 'Brand Boards', href: '#brand-boards', icon: PaintBrushIcon, isNew: true },
+      { name: 'Companies', href: '#companies', icon: BuildingStorefrontIcon },
     ],
   },
 ]
@@ -85,35 +86,13 @@ import {
   BuildingStorefrontIcon
 } from '@heroicons/react/24/outline'
 
-// Import mini icons
-import {
-  BuildingOfficeIcon as BuildingOfficeIconMini,
-  CreditCardIcon as CreditCardIconMini,
-  UserGroupIcon as UserGroupIconMini,
-  ChartBarIcon as ChartBarIconMini,
-  CogIcon as CogIconMini,
-  CalendarIcon as CalendarIconMini,
-  ChatBubbleLeftRightIcon as ChatBubbleLeftRightIconMini,
-  DocumentTextIcon as DocumentTextIconMini,
-  SparklesIcon as SparklesIconMini,
-  EnvelopeIcon as EnvelopeIconMini,
-  PhoneIcon as PhoneIconMini,
-  ChatBubbleBottomCenterTextIcon as ChatBubbleBottomCenterTextIconMini,
-  CubeIcon as CubeIconMini,
-  TagIcon as TagIconMini,
-  GlobeAltIcon as GlobeAltIconMini,
-  ArrowPathIcon as ArrowPathIconMini,
-  PuzzlePieceIcon as PuzzlePieceIconMini,
-  ClipboardDocumentListIcon as ClipboardDocumentListIconMini,
-  PaintBrushIcon as PaintBrushIconMini,
-  BuildingStorefrontIcon as BuildingStorefrontIconMini
-} from '@heroicons/react/20/solid'
+
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function SettingsMenu({ onGoBack, isDarkMode = true }: SettingsMenuProps) {
+export default function SettingsMenu({ onGoBack, isDarkMode = true, activeSettingsItem, setActiveSettingsItem }: SettingsMenuProps) {
   // Theme-based styles
   const themeStyles = {
     background: isDarkMode ? 'bg-[#052149]' : 'bg-white',
@@ -163,11 +142,15 @@ export default function SettingsMenu({ onGoBack, isDarkMode = true }: SettingsMe
                   <li key={item.name}>
                     <a
                       href={item.href}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        setActiveSettingsItem(item.name)
+                      }}
                       className={classNames(
-                        item.current 
+                        activeSettingsItem === item.name
                           ? `${themeStyles.activeBg} text-white` 
                           : `${themeStyles.tertiaryText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
-                        'group flex items-center justify-between rounded-md px-3 py-2 text-sm transition-colors'
+                        'group flex items-center justify-between rounded-md px-3 py-2 text-sm transition-colors cursor-pointer'
                       )}
                     >
                       <div className="flex items-center gap-x-3">
