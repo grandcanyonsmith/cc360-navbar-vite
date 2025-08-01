@@ -20,7 +20,6 @@ interface NavItem {
   href?: string;
   current?: boolean;
   icon?: React.ComponentType<{ className?: string }>;
-  iconMini?: React.ComponentType<{ className?: string }>;
   children?: { 
     name: string; 
     href: string; 
@@ -33,7 +32,7 @@ const navigation: NavItem[] = [
   {
     name: 'Onboarding',
     icon: AcademicCapIcon,
-    iconMini: AcademicCapIconMini,
+
     children: [
       { name: 'Get Started', href: '#get-started' },
       { name: '90-Min Bootcamp', href: '#bootcamp' },
@@ -43,7 +42,7 @@ const navigation: NavItem[] = [
   {
     name: 'Dashboard & CRM',
     icon: HomeIcon,
-    iconMini: HomeIconMini,
+
     children: [
       { name: 'Dashboard', href: '#dashboard', current: true },
       { name: 'Conversations', href: '#conversations' },
@@ -56,7 +55,7 @@ const navigation: NavItem[] = [
   {
     name: 'Marketing Tools',
     icon: MegaphoneIcon,
-    iconMini: MegaphoneIconMini,
+
     children: [
       { name: 'Marketing', href: '#marketing' },
       { name: 'Automation', href: '#automation' },
@@ -67,7 +66,7 @@ const navigation: NavItem[] = [
   {
     name: 'Sites & Learning',
     icon: GlobeAltIcon,
-    iconMini: GlobeAltIconMini,
+
     children: [
       { name: 'Sites', href: '#sites' },
       { name: 'Memberships', href: '#memberships' },
@@ -78,7 +77,7 @@ const navigation: NavItem[] = [
   {
     name: 'Insights & Integrations',
     icon: ChartBarIcon,
-    iconMini: ChartBarIconMini,
+
     children: [
       { name: 'Reporting', href: '#reporting' },
       { name: 'App Marketplace', href: '#marketplace' },
