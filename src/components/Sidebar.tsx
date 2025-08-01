@@ -1,5 +1,5 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   ChevronRightIcon, 
@@ -12,6 +12,8 @@ import {
   ChartBarIcon,
   Cog6ToothIcon,
   GlobeAltIcon,
+  SunIcon,
+  MoonIcon,
 } from '@heroicons/react/24/outline'
 import SettingsMenu from './SettingsMenu'
 
@@ -94,6 +96,9 @@ export default function Sidebar() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [isDarkMode, setIsDarkMode] = useState(true)
+  const [activeMenuItem, setActiveMenuItem] = useState('Dashboard')
+  const sidebarRef = useRef<HTMLDivElement>(null)
 
   const handleSidebarToggle = () => {
     setSidebarCollapsed(!sidebarCollapsed)
@@ -120,14 +125,6 @@ export default function Sidebar() {
     setShowSettings(false)
   }
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // If sidebar is collapsed, expand it when clicking a nav item
-    if (sidebarCollapsed) {
-      e.preventDefault()
-      setSidebarCollapsed(false)
-    }
-  }
-
   const handleDisclosureClick = () => {
     // If sidebar is collapsed, expand it when clicking a disclosure button
     if (sidebarCollapsed) {
@@ -135,9 +132,58 @@ export default function Sidebar() {
     }
   }
 
+  const handleThemeToggle = () => {
+    setIsDarkMode(!isDarkMode)
+  }
+
+  const handleMenuItemClick = (itemName: string, href?: string) => {
+    setActiveMenuItem(itemName)
+    if (href && !sidebarCollapsed) {
+      // Normal navigation
+      window.location.href = href
+    } else if (sidebarCollapsed) {
+      // Expand sidebar first
+      setSidebarCollapsed(false)
+    }
+  }
+
+  // Click outside to collapse
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+        if (!sidebarCollapsed) {
+          setSidebarCollapsed(true)
+          if (showSettings) {
+            setShowSettings(false)
+          }
+        }
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [sidebarCollapsed, showSettings])
+
+  // Theme-based styles
+  const themeStyles = {
+    background: isDarkMode ? 'bg-[#052149]' : 'bg-white',
+    text: isDarkMode ? 'text-white' : 'text-gray-900',
+    border: isDarkMode ? 'border-[#1e3a8a]' : 'border-gray-200',
+    searchBg: isDarkMode ? 'bg-[#1e3a8a]' : 'bg-gray-100',
+    hoverBg: isDarkMode ? 'hover:bg-[#1e3a8a]' : 'hover:bg-gray-100',
+    activeBg: isDarkMode ? 'bg-[#3B82F6]' : 'bg-blue-500',
+    secondaryText: isDarkMode ? 'text-[#9CA3AF]' : 'text-gray-600',
+    tertiaryText: isDarkMode ? 'text-[#6B7280]' : 'text-gray-500',
+    buttonText: isDarkMode ? 'text-[#6B7280]' : 'text-gray-400',
+    buttonHover: isDarkMode ? 'hover:text-white' : 'hover:text-gray-900',
+  }
+
   return (
     <motion.div 
-      className="flex h-full flex-col bg-[#052149] text-white"
+      ref={sidebarRef}
+      className={`flex h-full flex-col ${themeStyles.background} ${themeStyles.text}`}
       initial={false}
       animate={{ 
         width: sidebarCollapsed ? 64 : 320 
@@ -148,7 +194,7 @@ export default function Sidebar() {
       }}
     >
       {/* Header */}
-      <div className="flex h-16 shrink-0 items-center px-6 border-b border-[#1e3a8a]">
+      <div className={`flex h-16 shrink-0 items-center px-6 border-b ${themeStyles.border}`}>
         <AnimatePresence mode="wait">
           {!sidebarCollapsed && !showSettings && (
             <motion.img
@@ -163,9 +209,26 @@ export default function Sidebar() {
             />
           )}
         </AnimatePresence>
+        
+        {/* Theme Toggle - only show when expanded */}
+        {!sidebarCollapsed && (
+          <motion.button
+            onClick={handleThemeToggle}
+            className={`p-2 rounded-md ${themeStyles.buttonText} ${themeStyles.hoverBg} ${themeStyles.buttonHover} transition-colors ml-auto mr-2`}
+            title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            whileTap={{ scale: 0.95 }}
+          >
+            {isDarkMode ? (
+              <SunIcon className="h-5 w-5" />
+            ) : (
+              <MoonIcon className="h-5 w-5" />
+            )}
+          </motion.button>
+        )}
+        
         <motion.button
           onClick={handleSidebarToggle}
-          className={`p-2 rounded-md text-[#6B7280] hover:bg-[#1e3a8a] hover:text-white transition-colors ${sidebarCollapsed ? 'mx-auto' : 'ml-auto'}`}
+          className={`p-2 rounded-md ${themeStyles.buttonText} ${themeStyles.hoverBg} ${themeStyles.buttonHover} transition-colors ${sidebarCollapsed ? 'mx-auto' : ''}`}
           title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           whileTap={{ scale: 0.95 }}
         >
@@ -185,16 +248,16 @@ export default function Sidebar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="px-6 py-4 border-b border-[#1e3a8a]"
+            className={`px-6 py-4 border-b ${themeStyles.border}`}
           >
             <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B7280]" />
+              <MagnifyingGlassIcon className={`absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 ${themeStyles.tertiaryText}`} />
               <input
                 type="text"
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-md border-0 bg-[#1e3a8a] py-2 pl-10 pr-3 text-sm text-white placeholder-[#6B7280] focus:ring-2 focus:ring-[#3B82F6] focus:ring-inset transition-all duration-200"
+                className={`w-full rounded-md border-0 ${themeStyles.searchBg} py-2 pl-10 pr-3 text-sm ${themeStyles.text} placeholder-${isDarkMode ? '[#6B7280]' : 'gray-500'} focus:ring-2 focus:ring-blue-500 focus:ring-inset transition-all duration-200`}
               />
             </div>
           </motion.div>
@@ -205,11 +268,15 @@ export default function Sidebar() {
       <AnimatePresence>
         {!showSettings && (
           <motion.nav 
-            className="flex flex-1 flex-col overflow-y-auto"
+            className={`flex flex-1 flex-col overflow-y-auto scroll-smooth ${!isDarkMode ? 'light-scrollbar' : ''}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
+            style={{ 
+              scrollbarWidth: 'thin',
+              scrollbarColor: isDarkMode ? '#374151 #1f2937' : '#d1d5db #f9fafb'
+            }}
           >
             <ul role="list" className="flex flex-1 flex-col gap-y-7 px-6 py-4">
               <li>
@@ -224,11 +291,14 @@ export default function Sidebar() {
                       {!item.children ? (
                         <a
                           href={item.href}
-                          onClick={handleNavClick}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            handleMenuItemClick(item.name, item.href)
+                          }}
                           className={classNames(
-                            item.current 
-                              ? 'bg-[#3B82F6] text-white' 
-                              : 'text-[#9CA3AF] hover:bg-[#1e3a8a] hover:text-white',
+                            activeMenuItem === item.name
+                              ? `${themeStyles.activeBg} text-white` 
+                              : `${themeStyles.secondaryText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
                             sidebarCollapsed 
                               ? 'group flex items-center justify-center rounded-md p-2 text-sm font-medium transition-colors'
                               : 'group flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium transition-colors'
@@ -258,7 +328,7 @@ export default function Sidebar() {
                             <DisclosureButton
                               onClick={handleDisclosureClick}
                               className={classNames(
-                                'group flex w-full items-center rounded-md text-left text-sm font-medium text-[#9CA3AF] hover:bg-[#1e3a8a] hover:text-white transition-colors',
+                                `group flex w-full items-center rounded-md text-left text-sm font-medium ${themeStyles.secondaryText} ${themeStyles.hoverBg} ${themeStyles.buttonHover} transition-colors`,
                                 sidebarCollapsed 
                                   ? 'justify-center p-2'
                                   : 'justify-between px-3 py-2'
@@ -314,16 +384,20 @@ export default function Sidebar() {
                                       <li key={subItem.name}>
                                         <a
                                           href={subItem.href}
+                                          onClick={(e) => {
+                                            e.preventDefault()
+                                            handleMenuItemClick(subItem.name, subItem.href)
+                                          }}
                                           className={classNames(
-                                            subItem.current 
-                                              ? 'bg-[#3B82F6] text-white' 
-                                              : 'text-[#6B7280] hover:bg-[#1e3a8a] hover:text-white',
+                                            activeMenuItem === subItem.name
+                                              ? `${themeStyles.activeBg} text-white` 
+                                              : `${themeStyles.tertiaryText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
                                             'group flex items-center justify-between rounded-md px-3 py-2 text-sm transition-colors'
                                           )}
                                         >
                                           <span>{subItem.name}</span>
                                           {subItem.isNew && (
-                                            <span className="inline-flex items-center rounded-full bg-[#b98a15] px-2 py-1 text-xs font-medium text-white">
+                                            <span className="inline-flex items-center rounded-full bg-orange-500 px-2 py-1 text-xs font-medium text-white">
                                               NEW
                                             </span>
                                           )}
@@ -356,13 +430,13 @@ export default function Sidebar() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <SettingsMenu onGoBack={handleGoBack} />
+            <SettingsMenu onGoBack={handleGoBack} isDarkMode={isDarkMode} />
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Profile Footer - Always visible */}
-      <div className="border-t border-[#1e3a8a] px-6 py-4">
+      <div className={`border-t ${themeStyles.border} px-6 py-4`}>
         <div className={classNames(
           'flex items-center',
           sidebarCollapsed ? 'flex-col gap-y-3' : 'justify-between'
@@ -374,12 +448,12 @@ export default function Sidebar() {
             <img
               alt=""
               src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-              className="h-8 w-8 rounded-full bg-[#1e3a8a]"
+              className={`h-8 w-8 rounded-full ${isDarkMode ? 'bg-[#1e3a8a]' : 'bg-gray-200'}`}
             />
             <AnimatePresence>
               {!sidebarCollapsed && (
                 <motion.span 
-                  className="text-sm font-medium text-[#9CA3AF]"
+                  className={`text-sm font-medium ${themeStyles.secondaryText}`}
                   initial={{ opacity: 0, width: 0 }}
                   animate={{ opacity: 1, width: "auto" }}
                   exit={{ opacity: 0, width: 0 }}
@@ -394,8 +468,8 @@ export default function Sidebar() {
             onClick={handleSettingsClick}
             className={classNames(
               showSettings 
-                ? 'bg-[#3B82F6] text-white' 
-                : 'text-[#6B7280] hover:bg-[#1e3a8a] hover:text-white',
+                ? `${themeStyles.activeBg} text-white` 
+                : `${themeStyles.buttonText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
               'p-2 rounded-md transition-colors'
             )}
             title="Settings"

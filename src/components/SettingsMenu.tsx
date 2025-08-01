@@ -15,6 +15,7 @@ interface SettingsSection {
 
 interface SettingsMenuProps {
   onGoBack: () => void;
+  isDarkMode?: boolean;
 }
 
 const settingsSections: SettingsSection[] = [
@@ -112,24 +113,40 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function SettingsMenu({ onGoBack }: SettingsMenuProps) {
+export default function SettingsMenu({ onGoBack, isDarkMode = true }: SettingsMenuProps) {
+  // Theme-based styles
+  const themeStyles = {
+    background: isDarkMode ? 'bg-[#052149]' : 'bg-white',
+    text: isDarkMode ? 'text-white' : 'text-gray-900',
+    border: isDarkMode ? 'border-[#1e3a8a]' : 'border-gray-200',
+    hoverBg: isDarkMode ? 'hover:bg-[#1e3a8a]' : 'hover:bg-gray-100',
+    activeBg: isDarkMode ? 'bg-[#3B82F6]' : 'bg-blue-500',
+    secondaryText: isDarkMode ? 'text-[#9CA3AF]' : 'text-gray-600',
+    tertiaryText: isDarkMode ? 'text-[#6B7280]' : 'text-gray-500',
+    buttonText: isDarkMode ? 'text-[#6B7280]' : 'text-gray-400',
+    buttonHover: isDarkMode ? 'hover:text-white' : 'hover:text-gray-900',
+  }
   return (
     <>
       {/* Settings Header */}
-      <div className="flex items-center gap-x-3 px-6 py-4 border-b border-[#1e3a8a]">
+      <div className={`flex items-center gap-x-3 px-6 py-4 border-b ${themeStyles.border}`}>
         <motion.button
           onClick={onGoBack}
-          className="p-1 rounded-md text-[#6B7280] hover:bg-[#1e3a8a] hover:text-white transition-colors"
+          className={`p-1 rounded-md ${themeStyles.buttonText} ${themeStyles.hoverBg} ${themeStyles.buttonHover} transition-colors`}
           title="Go Back"
           whileTap={{ scale: 0.95 }}
         >
           <ArrowLeftIcon className="h-5 w-5" />
         </motion.button>
-        <span className="text-sm font-medium text-white">Settings</span>
+        <span className={`text-sm font-medium ${themeStyles.text}`}>Settings</span>
       </div>
 
       {/* Settings Menu Content */}
-      <nav className="flex flex-1 flex-col overflow-y-auto">
+      <nav className={`flex flex-1 flex-col overflow-y-auto scroll-smooth ${!isDarkMode ? 'light-scrollbar' : ''}`}
+           style={{ 
+             scrollbarWidth: 'thin',
+             scrollbarColor: isDarkMode ? '#374151 #1f2937' : '#d1d5db #f9fafb'
+           }}>
         <div className="px-6 py-4">
           <div className="space-y-6">
             {settingsSections.map((section, sectionIndex) => (
@@ -139,7 +156,7 @@ export default function SettingsMenu({ onGoBack }: SettingsMenuProps) {
                 animate={{ opacity: 1 }}
                 transition={{ delay: sectionIndex * 0.03, duration: 0.2 }}
               >
-                <h4 className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider mb-3">
+                <h4 className={`text-xs font-semibold ${themeStyles.secondaryText} uppercase tracking-wider mb-3`}>
                   {section.title}
                 </h4>
                 <ul className="space-y-1">
@@ -149,8 +166,8 @@ export default function SettingsMenu({ onGoBack }: SettingsMenuProps) {
                         href={item.href}
                         className={classNames(
                           item.current 
-                            ? 'bg-[#3B82F6] text-white' 
-                            : 'text-[#6B7280] hover:bg-[#1e3a8a] hover:text-white',
+                            ? `${themeStyles.activeBg} text-white` 
+                            : `${themeStyles.tertiaryText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
                           'group flex items-center justify-between rounded-md px-3 py-2 text-sm transition-colors'
                         )}
                       >
@@ -161,7 +178,7 @@ export default function SettingsMenu({ onGoBack }: SettingsMenuProps) {
                           <span>{item.name}</span>
                         </div>
                         {item.isNew && (
-                          <span className="inline-flex items-center rounded-full bg-[#b98a15] px-2 py-1 text-xs font-medium text-white">
+                          <span className="inline-flex items-center rounded-full bg-orange-500 px-2 py-1 text-xs font-medium text-white">
                             NEW
                           </span>
                         )}
