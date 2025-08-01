@@ -12,8 +12,6 @@ import {
   ChartBarIcon,
   Cog6ToothIcon,
   GlobeAltIcon,
-  SunIcon,
-  MoonIcon,
 } from '@heroicons/react/24/outline'
 import SettingsMenu from './SettingsMenu'
 
@@ -96,7 +94,10 @@ export default function Sidebar() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [isDarkMode, setIsDarkMode] = useState(true)
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    // Auto-detect system theme preference
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+  })
   const [activeMenuItem, setActiveMenuItem] = useState('Dashboard')
   const sidebarRef = useRef<HTMLDivElement>(null)
 
@@ -132,9 +133,16 @@ export default function Sidebar() {
     }
   }
 
-  const handleThemeToggle = () => {
-    setIsDarkMode(!isDarkMode)
-  }
+  // Listen for system theme changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleThemeChange = (e: MediaQueryListEvent) => {
+      setIsDarkMode(e.matches)
+    }
+    
+    mediaQuery.addEventListener('change', handleThemeChange)
+    return () => mediaQuery.removeEventListener('change', handleThemeChange)
+  }, [])
 
   const handleMenuItemClick = (itemName: string, href?: string) => {
     setActiveMenuItem(itemName)
@@ -147,10 +155,13 @@ export default function Sidebar() {
     }
   }
 
-  // Click outside to collapse
+  // Click outside to collapse (mobile only)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+      // Only collapse on mobile (screen width < 768px)
+      const isMobile = window.innerWidth < 768
+      
+      if (isMobile && sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
         if (!sidebarCollapsed) {
           setSidebarCollapsed(true)
           if (showSettings) {
@@ -210,25 +221,9 @@ export default function Sidebar() {
           )}
         </AnimatePresence>
         
-        {/* Theme Toggle - only show when expanded */}
-        {!sidebarCollapsed && (
-          <motion.button
-            onClick={handleThemeToggle}
-            className={`p-2 rounded-md ${themeStyles.buttonText} ${themeStyles.hoverBg} ${themeStyles.buttonHover} transition-colors ml-auto mr-2`}
-            title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            whileTap={{ scale: 0.95 }}
-          >
-            {isDarkMode ? (
-              <SunIcon className="h-5 w-5" />
-            ) : (
-              <MoonIcon className="h-5 w-5" />
-            )}
-          </motion.button>
-        )}
-        
         <motion.button
           onClick={handleSidebarToggle}
-          className={`p-2 rounded-md ${themeStyles.buttonText} ${themeStyles.hoverBg} ${themeStyles.buttonHover} transition-colors ${sidebarCollapsed ? 'mx-auto' : ''}`}
+          className={`p-2 rounded-md ${themeStyles.buttonText} ${themeStyles.hoverBg} ${themeStyles.buttonHover} transition-colors ${sidebarCollapsed ? 'mx-auto' : 'ml-auto'}`}
           title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           whileTap={{ scale: 0.95 }}
         >
@@ -264,160 +259,160 @@ export default function Sidebar() {
         )}
       </AnimatePresence>
 
-      {/* Navigation - Show only when not in settings */}
+      {/* Navigation - Scrollable area between search and bottom sections */}
       <AnimatePresence>
         {!showSettings && (
-          <motion.nav 
-            className={`flex flex-1 flex-col overflow-y-auto scroll-smooth ${!isDarkMode ? 'light-scrollbar' : ''}`}
+          <motion.div 
+            className="flex-1 overflow-hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            style={{ 
-              scrollbarWidth: 'thin',
-              scrollbarColor: isDarkMode ? '#374151 #1f2937' : '#d1d5db #f9fafb'
-            }}
           >
-            <ul role="list" className="flex flex-1 flex-col gap-y-7 px-6 py-4">
-              <li>
-                <ul role="list" className="space-y-1">
-                  {navigation.map((item, index) => (
-                    <motion.li 
-                      key={item.name}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: index * 0.02, duration: 0.2 }}
-                    >
-                      {!item.children ? (
-                        <a
-                          href={item.href}
-                          onClick={(e) => {
-                            e.preventDefault()
-                            handleMenuItemClick(item.name, item.href)
-                          }}
-                          className={classNames(
-                            activeMenuItem === item.name
-                              ? `${themeStyles.activeBg} text-white` 
-                              : `${themeStyles.secondaryText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
-                            sidebarCollapsed 
-                              ? 'group flex items-center justify-center rounded-md p-2 text-sm font-medium transition-colors'
-                              : 'group flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium transition-colors'
-                          )}
-                          title={sidebarCollapsed ? item.name : undefined}
-                        >
-                          {item.icon && (
-                            <item.icon className="h-5 w-5 shrink-0" />
-                          )}
-                          <AnimatePresence>
-                            {!sidebarCollapsed && (
-                              <motion.span
-                                initial={{ opacity: 0, width: 0 }}
-                                animate={{ opacity: 1, width: "auto" }}
-                                exit={{ opacity: 0, width: 0 }}
-                                transition={{ duration: 0.15 }}
-                              >
-                                {item.name}
-                              </motion.span>
-                            )}
-                          </AnimatePresence>
-                        </a>
-                    ) : (
-                      <Disclosure as="div" defaultOpen={item.name === 'Dashboard & CRM'}>
-                        {({ open }) => (
-                          <>
-                            <DisclosureButton
-                              onClick={handleDisclosureClick}
-                              className={classNames(
-                                `group flex w-full items-center rounded-md text-left text-sm font-medium ${themeStyles.secondaryText} ${themeStyles.hoverBg} ${themeStyles.buttonHover} transition-colors`,
-                                sidebarCollapsed 
-                                  ? 'justify-center p-2'
-                                  : 'justify-between px-3 py-2'
-                              )}
-                              title={sidebarCollapsed ? item.name : undefined}
+            <nav 
+              className={`h-full overflow-y-auto scroll-smooth ${!isDarkMode ? 'light-scrollbar' : ''}`}
+              style={{ 
+                scrollbarWidth: 'thin',
+                scrollbarColor: isDarkMode ? '#374151 #1f2937' : '#d1d5db #f9fafb'
+              }}
+            >
+              <ul role="list" className="px-6 py-4 space-y-1">
+                {navigation.map((item, index) => (
+                  <motion.li 
+                    key={item.name}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: index * 0.02, duration: 0.2 }}
+                  >
+                    {!item.children ? (
+                      <a
+                        href={item.href}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          handleMenuItemClick(item.name, item.href)
+                        }}
+                        className={classNames(
+                          activeMenuItem === item.name
+                            ? `${themeStyles.activeBg} text-white` 
+                            : `${themeStyles.secondaryText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
+                          sidebarCollapsed 
+                            ? 'group flex items-center justify-center rounded-md p-2 text-sm font-medium transition-colors'
+                            : 'group flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium transition-colors'
+                        )}
+                        title={sidebarCollapsed ? item.name : undefined}
+                      >
+                        {item.icon && (
+                          <item.icon className="h-5 w-5 shrink-0" />
+                        )}
+                        <AnimatePresence>
+                          {!sidebarCollapsed && (
+                            <motion.span
+                              initial={{ opacity: 0, width: 0 }}
+                              animate={{ opacity: 1, width: "auto" }}
+                              exit={{ opacity: 0, width: 0 }}
+                              transition={{ duration: 0.15 }}
                             >
-                              <div className={classNames(
-                                'flex items-center',
-                                sidebarCollapsed ? '' : 'gap-x-3'
-                              )}>
-                                {item.icon && (
-                                  <item.icon className="h-5 w-5 shrink-0" />
-                                )}
-                                <AnimatePresence>
-                                  {!sidebarCollapsed && (
-                                    <motion.span
-                                      initial={{ opacity: 0, width: 0 }}
-                                      animate={{ opacity: 1, width: "auto" }}
-                                      exit={{ opacity: 0, width: 0 }}
-                                      transition={{ duration: 0.15 }}
-                                    >
-                                      {item.name}
-                                    </motion.span>
-                                  )}
-                                </AnimatePresence>
-                              </div>
+                              {item.name}
+                            </motion.span>
+                          )}
+                        </AnimatePresence>
+                      </a>
+                  ) : (
+                    <Disclosure as="div" defaultOpen={item.name === 'Dashboard & CRM'}>
+                      {({ open }) => (
+                        <>
+                          <DisclosureButton
+                            onClick={handleDisclosureClick}
+                            className={classNames(
+                              `group flex w-full items-center rounded-md text-left text-sm font-medium ${themeStyles.secondaryText} ${themeStyles.hoverBg} ${themeStyles.buttonHover} transition-colors`,
+                              sidebarCollapsed 
+                                ? 'justify-center p-2'
+                                : 'justify-between px-3 py-2'
+                            )}
+                            title={sidebarCollapsed ? item.name : undefined}
+                          >
+                            <div className={classNames(
+                              'flex items-center',
+                              sidebarCollapsed ? '' : 'gap-x-3'
+                            )}>
+                              {item.icon && (
+                                <item.icon className="h-5 w-5 shrink-0" />
+                              )}
                               <AnimatePresence>
                                 {!sidebarCollapsed && (
-                                  <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ 
-                                      opacity: 1,
-                                      rotate: open ? 90 : 0 
-                                    }}
-                                    exit={{ opacity: 0 }}
+                                  <motion.span
+                                    initial={{ opacity: 0, width: 0 }}
+                                    animate={{ opacity: 1, width: "auto" }}
+                                    exit={{ opacity: 0, width: 0 }}
                                     transition={{ duration: 0.15 }}
                                   >
-                                    <ChevronRightIcon className="h-4 w-4 shrink-0" />
-                                  </motion.div>
+                                    {item.name}
+                                  </motion.span>
                                 )}
                               </AnimatePresence>
-                            </DisclosureButton>
+                            </div>
                             <AnimatePresence>
                               {!sidebarCollapsed && (
                                 <motion.div
-                                  initial={{ opacity: 0, height: 0 }}
-                                  animate={{ opacity: 1, height: "auto" }}
-                                  exit={{ opacity: 0, height: 0 }}
+                                  initial={{ opacity: 0 }}
+                                  animate={{ 
+                                    opacity: 1,
+                                    rotate: open ? 90 : 0 
+                                  }}
+                                  exit={{ opacity: 0 }}
                                   transition={{ duration: 0.15 }}
                                 >
-                                  <DisclosurePanel as="ul" className="mt-1 space-y-1 pl-8">
-                                    {item.children?.map((subItem) => (
-                                      <li key={subItem.name}>
-                                        <a
-                                          href={subItem.href}
-                                          onClick={(e) => {
-                                            e.preventDefault()
-                                            handleMenuItemClick(subItem.name, subItem.href)
-                                          }}
-                                          className={classNames(
-                                            activeMenuItem === subItem.name
-                                              ? `${themeStyles.activeBg} text-white` 
-                                              : `${themeStyles.tertiaryText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
-                                            'group flex items-center justify-between rounded-md px-3 py-2 text-sm transition-colors'
-                                          )}
-                                        >
-                                          <span>{subItem.name}</span>
-                                          {subItem.isNew && (
-                                            <span className="inline-flex items-center rounded-full bg-orange-500 px-2 py-1 text-xs font-medium text-white">
-                                              NEW
-                                            </span>
-                                          )}
-                                        </a>
-                                      </li>
-                                    ))}
-                                  </DisclosurePanel>
+                                  <ChevronRightIcon className="h-4 w-4 shrink-0" />
                                 </motion.div>
                               )}
                             </AnimatePresence>
-                          </>
-                        )}
-                      </Disclosure>
-                    )}
-                  </motion.li>
-                ))}
-              </ul>
-            </li>
-          </ul>
-        </motion.nav>
+                          </DisclosureButton>
+                          <AnimatePresence>
+                            {!sidebarCollapsed && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.15 }}
+                              >
+                                <DisclosurePanel as="ul" className="mt-1 space-y-1 pl-8">
+                                  {item.children?.map((subItem) => (
+                                    <li key={subItem.name}>
+                                      <a
+                                        href={subItem.href}
+                                        onClick={(e) => {
+                                          e.preventDefault()
+                                          handleMenuItemClick(subItem.name, subItem.href)
+                                        }}
+                                        className={classNames(
+                                          activeMenuItem === subItem.name
+                                            ? `${themeStyles.activeBg} text-white` 
+                                            : `${themeStyles.tertiaryText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
+                                          'group flex items-center justify-between rounded-md px-3 py-2 text-sm transition-colors'
+                                        )}
+                                      >
+                                        <span>{subItem.name}</span>
+                                        {subItem.isNew && (
+                                          <span className="inline-flex items-center rounded-full bg-orange-500 px-2 py-1 text-xs font-medium text-white">
+                                            NEW
+                                          </span>
+                                        )}
+                                      </a>
+                                    </li>
+                                  ))}
+                                </DisclosurePanel>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </>
+                      )}
+                    </Disclosure>
+                  )}
+                </motion.li>
+              ))}
+            </ul>
+          </nav>
+        </motion.div>
         )}
       </AnimatePresence>
 
@@ -435,15 +430,49 @@ export default function Sidebar() {
         )}
       </AnimatePresence>
 
-      {/* Profile Footer - Always visible */}
-      <div className={`border-t ${themeStyles.border} px-6 py-4`}>
-        <div className={classNames(
-          'flex items-center',
-          sidebarCollapsed ? 'flex-col gap-y-3' : 'justify-between'
-        )}>
+      {/* Fixed Bottom Section - Settings Icon and User Profile */}
+      <div className={`border-t ${themeStyles.border}`}>
+        {/* Settings Icon - Always in bottom left */}
+        <div className="px-6 py-3">
+          <motion.button
+            onClick={handleSettingsClick}
+            className={classNames(
+              showSettings 
+                ? `${themeStyles.activeBg} text-white` 
+                : `${themeStyles.buttonText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
+              sidebarCollapsed 
+                ? 'w-full flex justify-center p-2 rounded-md transition-colors'
+                : 'flex items-center gap-x-3 w-full px-3 py-2 rounded-md transition-colors'
+            )}
+            title="Settings"
+            whileTap={{ scale: 0.95 }}
+            animate={{ 
+              rotate: showSettings ? 180 : 0 
+            }}
+            transition={{ duration: 0.2 }}
+          >
+            <Cog6ToothIcon className="h-5 w-5 shrink-0" />
+            <AnimatePresence>
+              {!sidebarCollapsed && (
+                <motion.span 
+                  className="text-sm font-medium"
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: "auto" }}
+                  exit={{ opacity: 0, width: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  Settings
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.button>
+        </div>
+        
+        {/* User Profile - Below settings */}
+        <div className={`border-t ${themeStyles.border} px-6 py-4`}>
           <div className={classNames(
             'flex items-center',
-            sidebarCollapsed ? 'flex-col gap-y-2' : 'gap-x-4'
+            sidebarCollapsed ? 'justify-center' : 'gap-x-4'
           )}>
             <img
               alt=""
@@ -464,23 +493,6 @@ export default function Sidebar() {
               )}
             </AnimatePresence>
           </div>
-          <motion.button
-            onClick={handleSettingsClick}
-            className={classNames(
-              showSettings 
-                ? `${themeStyles.activeBg} text-white` 
-                : `${themeStyles.buttonText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
-              'p-2 rounded-md transition-colors'
-            )}
-            title="Settings"
-            whileTap={{ scale: 0.95 }}
-            animate={{ 
-              rotate: showSettings ? 180 : 0 
-            }}
-            transition={{ duration: 0.2 }}
-          >
-            <Cog6ToothIcon className="h-5 w-5" />
-          </motion.button>
         </div>
       </div>
     </motion.div>
