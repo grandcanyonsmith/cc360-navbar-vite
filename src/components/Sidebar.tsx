@@ -416,10 +416,11 @@ export default function Sidebar() {
         )}
       </AnimatePresence>
 
-      {/* Settings Menu - Show only when in settings */}
+      {/* Settings Menu Content - Replaces navigation when in settings */}
       <AnimatePresence>
         {showSettings && (
-          <motion.div
+          <motion.div 
+            className="flex-1 overflow-hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

@@ -127,70 +127,68 @@ export default function SettingsMenu({ onGoBack, isDarkMode = true }: SettingsMe
     buttonHover: isDarkMode ? 'hover:text-white' : 'hover:text-gray-900',
   }
   return (
-    <>
-      {/* Settings Header */}
-      <div className={`flex items-center gap-x-3 px-6 py-4 border-b ${themeStyles.border}`}>
-        <motion.button
-          onClick={onGoBack}
-          className={`p-1 rounded-md ${themeStyles.buttonText} ${themeStyles.hoverBg} ${themeStyles.buttonHover} transition-colors`}
-          title="Go Back"
-          whileTap={{ scale: 0.95 }}
-        >
-          <ArrowLeftIcon className="h-5 w-5" />
-        </motion.button>
-        <span className={`text-sm font-medium ${themeStyles.text}`}>Settings</span>
-      </div>
-
-      {/* Settings Menu Content */}
-      <nav className={`flex flex-1 flex-col overflow-y-auto scroll-smooth ${!isDarkMode ? 'light-scrollbar' : ''}`}
-           style={{ 
-             scrollbarWidth: 'thin',
-             scrollbarColor: isDarkMode ? '#374151 #1f2937' : '#d1d5db #f9fafb'
-           }}>
-        <div className="px-6 py-4">
-          <div className="space-y-6">
-            {settingsSections.map((section, sectionIndex) => (
-              <motion.div 
-                key={section.title}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: sectionIndex * 0.03, duration: 0.2 }}
-              >
-                <h4 className={`text-xs font-semibold ${themeStyles.secondaryText} uppercase tracking-wider mb-3`}>
-                  {section.title}
-                </h4>
-                <ul className="space-y-1">
-                  {section.items.map((item) => (
-                    <li key={item.name}>
-                      <a
-                        href={item.href}
-                        className={classNames(
-                          item.current 
-                            ? `${themeStyles.activeBg} text-white` 
-                            : `${themeStyles.tertiaryText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
-                          'group flex items-center justify-between rounded-md px-3 py-2 text-sm transition-colors'
-                        )}
-                      >
-                        <div className="flex items-center gap-x-3">
-                          {item.icon && (
-                            <item.icon className="h-4 w-4 shrink-0" />
-                          )}
-                          <span>{item.name}</span>
-                        </div>
-                        {item.isNew && (
-                          <span className="inline-flex items-center rounded-full bg-orange-500 px-2 py-1 text-xs font-medium text-white">
-                            NEW
-                          </span>
-                        )}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
+    <nav className={`h-full overflow-y-auto scroll-smooth ${!isDarkMode ? 'light-scrollbar' : ''}`}
+         style={{ 
+           scrollbarWidth: 'thin',
+           scrollbarColor: isDarkMode ? '#374151 #1f2937' : '#d1d5db #f9fafb'
+         }}>
+      <div className="px-6 py-4">
+        {/* Back Button - At top of scrollable content */}
+        <div className="mb-6">
+          <motion.button
+            onClick={onGoBack}
+            className={`flex items-center gap-x-3 ${themeStyles.buttonText} ${themeStyles.hoverBg} ${themeStyles.buttonHover} px-3 py-2 rounded-md transition-colors`}
+            title="Go Back"
+            whileTap={{ scale: 0.95 }}
+          >
+            <ArrowLeftIcon className="h-5 w-5" />
+            <span className={`text-sm font-medium ${themeStyles.text}`}>Back to Menu</span>
+          </motion.button>
         </div>
-      </nav>
-    </>
+
+        {/* Settings Sections */}
+        <div className="space-y-6">
+          {settingsSections.map((section, sectionIndex) => (
+            <motion.div 
+              key={section.title}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: sectionIndex * 0.03, duration: 0.2 }}
+            >
+              <h4 className={`text-xs font-semibold ${themeStyles.secondaryText} uppercase tracking-wider mb-3`}>
+                {section.title}
+              </h4>
+              <ul className="space-y-1">
+                {section.items.map((item) => (
+                  <li key={item.name}>
+                    <a
+                      href={item.href}
+                      className={classNames(
+                        item.current 
+                          ? `${themeStyles.activeBg} text-white` 
+                          : `${themeStyles.tertiaryText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
+                        'group flex items-center justify-between rounded-md px-3 py-2 text-sm transition-colors'
+                      )}
+                    >
+                      <div className="flex items-center gap-x-3">
+                        {item.icon && (
+                          <item.icon className="h-4 w-4 shrink-0" />
+                        )}
+                        <span>{item.name}</span>
+                      </div>
+                      {item.isNew && (
+                        <span className="inline-flex items-center rounded-full bg-orange-500 px-2 py-1 text-xs font-medium text-white">
+                          NEW
+                        </span>
+                      )}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </nav>
   )
 } 
