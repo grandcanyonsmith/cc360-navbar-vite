@@ -68,6 +68,13 @@ const getNavigation = (): NavItem[] => {
   
   return [
     {
+      name: 'Courses',
+      iconOutline: AcademicCapIcon,
+      iconSolid: AcademicCapIconSolid,
+      iconMini: AcademicCapIconMini,
+      href: `${base}/memberships/client-portal/dashboard`,
+    },
+    {
       name: 'Conversations',
       iconOutline: ChatBubbleLeftRightIcon,
       iconSolid: ChatBubbleLeftRightIconSolid,
@@ -115,13 +122,6 @@ const getNavigation = (): NavItem[] => {
       iconSolid: GlobeAltIconSolid,
       iconMini: GlobeAltIconMini,
       href: `${base}/funnels-websites/funnels`,
-    },
-    {
-      name: 'Memberships',
-      iconOutline: AcademicCapIcon,
-      iconSolid: AcademicCapIconSolid,
-      iconMini: AcademicCapIconMini,
-      href: `${base}/memberships/client-portal/dashboard`,
     },
   ]
 }
@@ -504,16 +504,12 @@ export default function Sidebar() {
                         onClick={() => {
                           handleMenuItemClick(item.name, item.href)
                         }}
-                        className={
+                        className={classNames(
+                          'group flex items-center rounded-md p-2 text-sm font-medium transition-colors',
                           sidebarCollapsed
-                            ? 'group flex items-center justify-center rounded-md p-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800'
-                            : classNames(
-                                activeMenuItem === item.name
-                                  ? `${themeStyles.activeBg} text-white` 
-                                  : `${themeStyles.secondaryText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
-                                'group flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium transition-colors'
-                              )
-                        }
+                            ? 'justify-center hover:bg-gray-100 dark:hover:bg-gray-800'
+                            : `gap-x-3 px-3 py-2 ${themeStyles.hoverBg}`
+                        )}
                         title={sidebarCollapsed ? item.name : undefined}
                       >
                         {(() => {
@@ -522,10 +518,8 @@ export default function Sidebar() {
                             ? item.iconMini 
                             : (isActive ? item.iconSolid : item.iconOutline)
                           
-                          // Color classes for icons
-                          const iconColorClass = sidebarCollapsed
-                            ? (isActive ? 'text-blue-500' : 'text-gray-500')
-                            : ''
+                          // Color classes for icons - always use color, no background
+                          const iconColorClass = isActive ? 'text-blue-500' : 'text-gray-500'
                           
                           return IconComponent ? (
                             <IconComponent className={`${sidebarCollapsed ? "h-5 w-5 shrink-0" : "h-6 w-6 shrink-0"} ${iconColorClass}`} />
@@ -538,6 +532,7 @@ export default function Sidebar() {
                               animate={{ opacity: 1, width: "auto" }}
                               exit={{ opacity: 0, width: 0 }}
                               transition={{ duration: 0.15 }}
+                              className={activeMenuItem === item.name ? 'text-blue-500 font-semibold' : themeStyles.text}
                             >
                               {item.name}
                             </motion.span>
@@ -809,26 +804,29 @@ export default function Sidebar() {
       {/* Collapse Button - Outside bottom section, moves with sidebar */}
       <div 
         className="absolute bottom-5 z-50"
-        style={{ right: '-8px' }}
+        style={{ right: '-12px' }}
       >
         <motion.button
           onClick={handleSidebarToggle}
-          className={`flex items-center justify-center rounded-full ${themeStyles.text} ${themeStyles.hoverBg} transition-colors`}
+          className="flex items-center justify-center rounded-full transition-colors"
           style={{ 
-            fontSize: '1.5rem',
             background: 'transparent',
             border: 'none',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            padding: 0,
+            margin: 0,
+            lineHeight: 0
           }}
           title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           whileTap={{ scale: 0.95 }}
           whileHover={{ scale: 1.1 }}
         >
           <i
-            className={`fas ${sidebarCollapsed ? 'fa-chevron-circle-right' : 'fa-chevron-circle-left'} rounded-full`}
+            className={`fas ${sidebarCollapsed ? 'fa-chevron-circle-right' : 'fa-chevron-circle-left'}`}
             style={{
               color: isDarkMode ? '#9CA3AF' : '#6B7280',
-              fontSize: '1.5rem'
+              fontSize: '24px',
+              display: 'block'
             }}
           />
         </motion.button>
