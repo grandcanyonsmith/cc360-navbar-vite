@@ -48,7 +48,6 @@ const getNavigation = (): NavItem[] => {
       name: 'Dashboard',
       icon: ChartBarIcon,
       href: `${base}/dashboard`,
-      current: true,
     },
     {
       name: 'Conversations',
@@ -129,6 +128,30 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
+// Function to determine active menu item from URL
+const getActiveMenuItemFromUrl = (): string => {
+  const path = window.location.pathname
+  const navigation = getNavigation()
+  
+  // Find matching menu item by checking if the current path includes the href
+  for (const item of navigation) {
+    if (item.href && path.includes(item.href.split('/').pop() || '')) {
+      return item.name
+    }
+    // Check children items if they exist
+    if (item.children) {
+      for (const child of item.children) {
+        if (child.href && path.includes(child.href.split('/').pop() || '')) {
+          return child.name
+        }
+      }
+    }
+  }
+  
+  // Default to Dashboard if no match
+  return 'Dashboard'
+}
+
 export default function Sidebar() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
@@ -137,7 +160,7 @@ export default function Sidebar() {
     // Auto-detect system theme preference
     return window.matchMedia('(prefers-color-scheme: dark)').matches
   })
-  const [activeMenuItem, setActiveMenuItem] = useState('Dashboard')
+  const [activeMenuItem, setActiveMenuItem] = useState(() => getActiveMenuItemFromUrl())
   const [activeSettingsItem, setActiveSettingsItem] = useState('')
   const sidebarRef = useRef<HTMLDivElement>(null)
 
@@ -189,6 +212,21 @@ export default function Sidebar() {
     
     mediaQuery.addEventListener('change', handleThemeChange)
     return () => mediaQuery.removeEventListener('change', handleThemeChange)
+  }, [])
+
+  // Update active menu item when URL changes
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setActiveMenuItem(getActiveMenuItemFromUrl())
+    }
+    
+    // Listen for popstate (back/forward navigation)
+    window.addEventListener('popstate', handleLocationChange)
+    
+    // Also check on mount and URL changes
+    handleLocationChange()
+    
+    return () => window.removeEventListener('popstate', handleLocationChange)
   }, [])
 
   const handleMenuItemClick = (itemName: string, href?: string) => {
