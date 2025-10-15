@@ -5,7 +5,6 @@ import {
   ChevronRightIcon, 
   Bars3Icon,
   XMarkIcon,
-  MagnifyingGlassIcon,
   Cog6ToothIcon,
   ChatBubbleLeftRightIcon,
   CalendarDaysIcon,
@@ -206,7 +205,6 @@ export default function Sidebar() {
   })
   const [showSettings, setShowSettings] = useState(() => isSettingsPage())
   const [showUserMenu, setShowUserMenu] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
   const [isNavigating, setIsNavigating] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(() => {
     // Auto-detect system theme preference
@@ -504,29 +502,7 @@ export default function Sidebar() {
         </motion.button>
       </div>
 
-      {/* Search Bar - Only show when not in settings */}
-      <AnimatePresence>
-        {!sidebarCollapsed && !showSettings && (
-          <motion.div 
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-            className={`px-6 py-4 border-b ${themeStyles.border}`}
-          >
-            <div className="relative">
-              <MagnifyingGlassIcon className={`absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 ${themeStyles.tertiaryText}`} />
-              <input
-                type="text"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className={`w-full rounded-md border-0 ${themeStyles.searchBg} py-2 pl-10 pr-3 text-sm ${themeStyles.text} placeholder-${isDarkMode ? '[#6B7280]' : 'gray-500'} focus:ring-2 focus:ring-blue-500 focus:ring-inset transition-all duration-200`}
-              />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Search Bar removed per user request */}
 
       {/* Navigation - Scrollable area between search and bottom sections */}
       <AnimatePresence>

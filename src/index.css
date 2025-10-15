@@ -44,11 +44,19 @@ body[data-agency-page="false"] header.hl_header {
   overflow: hidden !important;
 }
 
-/* Remove top padding from main content areas */
+/* Remove top padding from main content areas - but keep topbar tabs visible */
 #location-dashboard,
-div[id*="location-"],
+div[id*="location-"]:not(.hl_wrapper):not(.hl_topbar-tabs),
 .h-screen {
   padding-top: 0 !important;
+}
+
+/* Ensure topbar tabs are visible */
+section.hl_wrapper.hl_topbar-tabs,
+.hl_wrapper--inner {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 /* Adjust body margin when CC360 sidebar is present */
