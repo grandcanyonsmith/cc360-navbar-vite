@@ -207,6 +207,7 @@ export default function Sidebar() {
   const [showSettings, setShowSettings] = useState(() => isSettingsPage())
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [isNavigating, setIsNavigating] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(() => {
     // Auto-detect system theme preference
     return window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -373,23 +374,41 @@ export default function Sidebar() {
   }, [])
 
   const handleMenuItemClick = (itemName: string, href?: string) => {
+    // Prevent navigation if already navigating
+    if (isNavigating) {
+      console.log('Navigation in progress, ignoring click')
+      return
+    }
+    
     setActiveMenuItem(itemName)
     
     // Validate href before navigation
     if (href && typeof href === 'string' && href.length > 0 && href !== 'undefined') {
+      setIsNavigating(true)
+      
       // Use History API for SPA navigation (no page reload)
       try {
+        // Update URL first
         window.history.pushState({}, '', href)
         
-        // Dispatch popstate event to notify GHL's router
-        window.dispatchEvent(new PopStateEvent('popstate', { state: {} }))
-        
-        // Also dispatch a custom navigation event that GHL might listen to
-        window.dispatchEvent(new CustomEvent('navigation', { 
-          detail: { url: href } 
-        }))
+        // Small delay to ensure URL is updated
+        setTimeout(() => {
+          // Dispatch popstate event to notify GHL's router
+          window.dispatchEvent(new PopStateEvent('popstate', { state: {} }))
+          
+          // Also dispatch a custom navigation event that GHL might listen to
+          window.dispatchEvent(new CustomEvent('navigation', { 
+            detail: { url: href } 
+          }))
+          
+          // Reset navigation lock after a delay
+          setTimeout(() => {
+            setIsNavigating(false)
+          }, 500)
+        }, 50)
       } catch (error) {
         console.error('Navigation error:', error)
+        setIsNavigating(false)
         // Fallback to normal navigation if SPA fails
         window.location.href = href
       }
