@@ -53,6 +53,9 @@ export default defineConfig({
     tailwindcss(),
     copyDemoFiles(),
   ],
+  define: {
+    'process.env.NODE_ENV': JSON.stringify('production')
+  },
   build: {
     lib: {
       entry: 'src/main.tsx',
