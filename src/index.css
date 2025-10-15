@@ -27,15 +27,15 @@
   background: #9ca3af;
 }
 
-/* Hide native GHL sidebar and header - but NOT on agency pages */
-body:not([data-agency-page]) aside#sidebar-v2,
-body:not([data-agency-page]) .lead-connector,
-body:not([data-agency-page]) aside[class*="sidebar"],
-body:not([data-agency-page]) aside[class*="nav"],
-body:not([data-agency-page]) nav[class*="sidebar"],
-body:not([data-agency-page]) .hl_nav-header,
-body:not([data-agency-page]) .hl_nav-settings,
-body:not([data-agency-page]) header.hl_header {
+/* Hide native GHL sidebar and header - ONLY on location pages (not agency pages) */
+body[data-agency-page="false"] aside#sidebar-v2,
+body[data-agency-page="false"] .lead-connector,
+body[data-agency-page="false"] aside[class*="sidebar"],
+body[data-agency-page="false"] aside[class*="nav"],
+body[data-agency-page="false"] nav[class*="sidebar"],
+body[data-agency-page="false"] .hl_nav-header,
+body[data-agency-page="false"] .hl_nav-settings,
+body[data-agency-page="false"] header.hl_header {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
