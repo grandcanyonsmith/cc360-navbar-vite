@@ -841,29 +841,25 @@ export default function Sidebar() {
       {/* Collapse Button - Outside bottom section, moves with sidebar */}
       <div 
         className="absolute bottom-5 z-50"
-        style={{ right: '-12px' }}
+        style={{ right: '-16px' }}
       >
         <motion.button
           onClick={handleSidebarToggle}
-          className="flex items-center justify-center rounded-full transition-colors"
-          style={{ 
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 0,
-            margin: 0,
-            lineHeight: 0
-          }}
+          className={`flex items-center justify-center w-8 h-8 rounded-full shadow-lg border ${
+            isDarkMode 
+              ? 'bg-[#1e3a8a] border-[#3b82f6] hover:bg-[#3b82f6]' 
+              : 'bg-white border-gray-200 hover:bg-gray-50'
+          } transition-all duration-200`}
           title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-          whileTap={{ scale: 0.95 }}
-          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.05 }}
         >
-          <i
-            className={`fas ${sidebarCollapsed ? 'fa-chevron-circle-right' : 'fa-chevron-circle-left'}`}
+          <ChevronRightIcon 
+            className={`h-5 w-5 transition-transform duration-200 ${
+              isDarkMode ? 'text-blue-400' : 'text-gray-600'
+            }`}
             style={{
-              color: isDarkMode ? '#9CA3AF' : '#6B7280',
-              fontSize: '24px',
-              display: 'block'
+              transform: sidebarCollapsed ? 'rotate(0deg)' : 'rotate(180deg)'
             }}
           />
         </motion.button>
