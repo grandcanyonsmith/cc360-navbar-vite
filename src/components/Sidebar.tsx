@@ -375,8 +375,16 @@ export default function Sidebar() {
   const handleMenuItemClick = (itemName: string, href?: string) => {
     setActiveMenuItem(itemName)
     if (href) {
-      // Navigate to the URL
-      window.location.href = href
+      // Use History API for SPA navigation (no page reload)
+      window.history.pushState({}, '', href)
+      
+      // Dispatch popstate event to notify GHL's router
+      window.dispatchEvent(new PopStateEvent('popstate', { state: {} }))
+      
+      // Also dispatch a custom navigation event that GHL might listen to
+      window.dispatchEvent(new CustomEvent('navigation', { 
+        detail: { url: href } 
+      }))
     } else if (sidebarCollapsed) {
       // Expand sidebar if no href
       setSidebarCollapsed(false)
@@ -521,7 +529,8 @@ export default function Sidebar() {
                     {!item.children ? (
                       <a
                         href={item.href}
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.preventDefault()
                           handleMenuItemClick(item.name, item.href)
                         }}
                         className={classNames(
@@ -627,7 +636,8 @@ export default function Sidebar() {
                                     <li key={subItem.name}>
                                       <a
                                         href={subItem.href}
-                                        onClick={() => {
+                                        onClick={(e) => {
+                                          e.preventDefault()
                                           handleMenuItemClick(subItem.name, subItem.href)
                                         }}
                                         className={classNames(

@@ -162,10 +162,20 @@ export default function SettingsMenu({ onGoBack, isDarkMode = true, activeSettin
                   <li key={item.name}>
                     <a
                       href={item.href}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault()
                         setActiveSettingsItem(item.name)
-                        // Allow normal navigation - don't prevent default
-                        window.location.href = item.href
+                        
+                        // Use History API for SPA navigation (no page reload)
+                        window.history.pushState({}, '', item.href)
+                        
+                        // Dispatch popstate event to notify GHL's router
+                        window.dispatchEvent(new PopStateEvent('popstate', { state: {} }))
+                        
+                        // Also dispatch a custom navigation event
+                        window.dispatchEvent(new CustomEvent('navigation', { 
+                          detail: { url: item.href } 
+                        }))
                       }}
                       className={classNames(
                         activeSettingsItem === item.name
