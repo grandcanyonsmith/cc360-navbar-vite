@@ -582,8 +582,17 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* Collapse Button - Bottom right */}
-        <div className={`absolute ${sidebarCollapsed ? 'bottom-5 -right-3' : 'bottom-5 -right-2'} z-50`}>
+        {/* Collapse Button - Moves with sidebar */}
+        <motion.div 
+          className="absolute bottom-5 z-50"
+          animate={{ 
+            right: sidebarCollapsed ? -12 : -8
+          }}
+          transition={{ 
+            duration: 0.2,
+            ease: "easeInOut"
+          }}
+        >
           <motion.button
             onClick={handleSidebarToggle}
             className={`flex items-center justify-center rounded-full ${themeStyles.text} ${themeStyles.hoverBg} transition-colors`}
@@ -607,7 +616,7 @@ export default function Sidebar() {
               transition={{ duration: 0.2 }}
             />
           </motion.button>
-        </div>
+        </motion.div>
       </div>
     </motion.div>
   )

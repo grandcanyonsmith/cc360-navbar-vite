@@ -12,6 +12,9 @@ function updateBodyMargin(isCollapsed: boolean) {
     document.body.classList.remove('cc360-sidebar-collapsed')
     document.body.classList.add('cc360-sidebar-active')
   }
+  
+  // Force browser reflow/repaint to apply margin immediately
+  void document.body.offsetHeight
 }
 
 // Listen for sidebar state changes
