@@ -33,8 +33,25 @@ function setupSidebarListener() {
   }) as EventListener)
 }
 
+// Check if on agency page
+function isAgencyPage(): boolean {
+  const path = window.location.pathname
+  return path.includes('/agency')
+}
+
 // Automatically mount the sidebar when the script loads
 function initSidebar() {
+  // Check if on agency page
+  if (isAgencyPage()) {
+    console.log('CC360 Sidebar: Skipping initialization on agency page')
+    // Mark body as agency page so CSS doesn't hide native sidebar
+    document.body.setAttribute('data-agency-page', 'true')
+    return
+  }
+  
+  // Mark body as location page (not agency)
+  document.body.setAttribute('data-agency-page', 'false')
+
   // Find or create container for the sidebar
   let container = document.getElementById('cc360-sidebar-root')
   
