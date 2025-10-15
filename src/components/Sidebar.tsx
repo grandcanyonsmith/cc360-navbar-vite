@@ -504,14 +504,16 @@ export default function Sidebar() {
                         onClick={() => {
                           handleMenuItemClick(item.name, item.href)
                         }}
-                        className={classNames(
-                          activeMenuItem === item.name
-                            ? `${themeStyles.activeBg} text-white` 
-                            : `${themeStyles.secondaryText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
-                          sidebarCollapsed 
-                            ? 'group flex items-center justify-center rounded-md p-2 text-sm font-medium transition-colors'
-                            : 'group flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium transition-colors'
-                        )}
+                        className={
+                          sidebarCollapsed
+                            ? 'group flex items-center justify-center rounded-md p-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800'
+                            : classNames(
+                                activeMenuItem === item.name
+                                  ? `${themeStyles.activeBg} text-white` 
+                                  : `${themeStyles.secondaryText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
+                                'group flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium transition-colors'
+                              )
+                        }
                         title={sidebarCollapsed ? item.name : undefined}
                       >
                         {(() => {
@@ -519,8 +521,14 @@ export default function Sidebar() {
                           const IconComponent = sidebarCollapsed 
                             ? item.iconMini 
                             : (isActive ? item.iconSolid : item.iconOutline)
+                          
+                          // Color classes for icons
+                          const iconColorClass = sidebarCollapsed
+                            ? (isActive ? 'text-blue-500' : 'text-gray-500')
+                            : ''
+                          
                           return IconComponent ? (
-                            <IconComponent className={sidebarCollapsed ? "h-5 w-5 shrink-0" : "h-6 w-6 shrink-0"} />
+                            <IconComponent className={`${sidebarCollapsed ? "h-5 w-5 shrink-0" : "h-6 w-6 shrink-0"} ${iconColorClass}`} />
                           ) : null
                         })()}
                         <AnimatePresence>
