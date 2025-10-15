@@ -374,71 +374,59 @@ export default function Sidebar() {
   const handleMenuItemClick = (itemName: string, href?: string) => {
     // Prevent navigation if already navigating
     if (isNavigating) {
-      console.log('Navigation in progress, ignoring click')
       return
     }
     
     setActiveMenuItem(itemName)
     
     // Validate href before navigation
-    if (href && typeof href === 'string' && href.length > 0 && href !== 'undefined') {
-      setIsNavigating(true)
-      
-      // Special handling for Automation tab - needs two-step navigation
-      if (itemName === 'Automation' && href.includes('/automation/workflows')) {
-        try {
-          // Step 1: Navigate to base automation URL first
-          window.history.pushState({}, '', href)
-          window.dispatchEvent(new PopStateEvent('popstate', { state: {} }))
-          
-          // Step 2: After page initializes, add query parameter
-          setTimeout(() => {
-            const urlWithParam = `${href}?listTab=all`
-            window.history.pushState({}, '', urlWithParam)
-            window.dispatchEvent(new PopStateEvent('popstate', { state: {} }))
-            
-            // Reset navigation lock
-            setTimeout(() => {
-              setIsNavigating(false)
-            }, 500)
-          }, 300)
-        } catch (error) {
-          console.error('Automation navigation error:', error)
-          setIsNavigating(false)
-          window.location.href = href
-        }
-        return
+    if (!href || typeof href !== 'string' || href.length === 0 || href === 'undefined') {
+      if (sidebarCollapsed) {
+        setSidebarCollapsed(false)
       }
-      
-      // Normal SPA navigation for other tabs
+      return
+    }
+    
+    setIsNavigating(true)
+    
+    // Special handling for Automation tab - needs two-step navigation
+    if (itemName === 'Automation' && href.includes('/automation/workflows')) {
       try {
-        // Update URL first
+        // Step 1: Navigate to base automation URL first
         window.history.pushState({}, '', href)
+        window.dispatchEvent(new PopStateEvent('popstate', { state: {} }))
         
-        // Small delay to ensure URL is updated
+        // Step 2: After page initializes, add query parameter
         setTimeout(() => {
-          // Dispatch popstate event to notify GHL's router
+          const urlWithParam = `${href}?listTab=all`
+          window.history.replaceState({}, '', urlWithParam)
           window.dispatchEvent(new PopStateEvent('popstate', { state: {} }))
           
-          // Also dispatch a custom navigation event that GHL might listen to
-          window.dispatchEvent(new CustomEvent('navigation', { 
-            detail: { url: href } 
-          }))
-          
-          // Reset navigation lock after a delay
-          setTimeout(() => {
-            setIsNavigating(false)
-          }, 500)
-        }, 50)
+          setTimeout(() => setIsNavigating(false), 300)
+        }, 200)
       } catch (error) {
-        console.error('Navigation error:', error)
+        console.error('Automation navigation error:', error)
         setIsNavigating(false)
-        // Fallback to normal navigation if SPA fails
-        window.location.href = href
       }
-    } else if (sidebarCollapsed) {
-      // Expand sidebar if no href
-      setSidebarCollapsed(false)
+      return
+    }
+    
+    // Normal SPA navigation for other tabs
+    try {
+      // Update URL
+      window.history.pushState({}, '', href)
+      
+      // Notify GHL's router
+      setTimeout(() => {
+        window.dispatchEvent(new PopStateEvent('popstate', { state: {} }))
+        window.dispatchEvent(new CustomEvent('navigation', { detail: { url: href } }))
+        
+        // Reset navigation lock
+        setTimeout(() => setIsNavigating(false), 400)
+      }, 30)
+    } catch (error) {
+      console.error('Navigation error:', error)
+      setIsNavigating(false)
     }
   }
 
@@ -487,7 +475,8 @@ export default function Sidebar() {
   return (
     <motion.div 
       ref={sidebarRef}
-      className={`flex h-full flex-col ${themeStyles.background} ${themeStyles.text} relative overflow-y-auto`}
+      className={`flex h-full flex-col ${themeStyles.background} ${themeStyles.text} relative`}
+      style={{ overflowY: 'hidden' }}
       initial={false}
       animate={{ 
         width: sidebarCollapsed ? 64 : 320 
@@ -530,18 +519,18 @@ export default function Sidebar() {
 
       {/* Search Bar removed per user request */}
 
-      {/* Navigation - Scrollable area between search and bottom sections */}
+      {/* Navigation - Scrollable area */}
       <AnimatePresence>
         {!showSettings && (
           <motion.div 
-            className="flex-1 overflow-hidden"
+            className="flex-1 overflow-y-auto overflow-x-hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
             <nav 
-              className={`h-full overflow-y-auto scroll-smooth ${!isDarkMode ? 'light-scrollbar' : ''}`}
+              className={`h-full scroll-smooth ${!isDarkMode ? 'light-scrollbar' : ''}`}
               style={{ 
                 scrollbarWidth: 'thin',
                 scrollbarColor: isDarkMode ? '#374151 #1f2937' : '#d1d5db #f9fafb'

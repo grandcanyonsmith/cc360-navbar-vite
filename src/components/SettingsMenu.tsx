@@ -167,23 +167,21 @@ export default function SettingsMenu({ onGoBack, isDarkMode = true, activeSettin
                         setActiveSettingsItem(item.name)
                         
                         // Validate href before navigation
-                        if (item.href && typeof item.href === 'string' && item.href.length > 0 && item.href !== 'undefined') {
-                          try {
-                            // Use History API for SPA navigation (no page reload)
-                            window.history.pushState({}, '', item.href)
-                            
-                            // Dispatch popstate event to notify GHL's router
+                        if (!item.href || typeof item.href !== 'string' || item.href.length === 0 || item.href === 'undefined') {
+                          return
+                        }
+                        
+                        try {
+                          // Use History API for SPA navigation
+                          window.history.pushState({}, '', item.href)
+                          
+                          // Small delay before dispatching events
+                          setTimeout(() => {
                             window.dispatchEvent(new PopStateEvent('popstate', { state: {} }))
-                            
-                            // Also dispatch a custom navigation event
-                            window.dispatchEvent(new CustomEvent('navigation', { 
-                              detail: { url: item.href } 
-                            }))
-                          } catch (error) {
-                            console.error('Navigation error:', error)
-                            // Fallback to normal navigation if SPA fails
-                            window.location.href = item.href
-                          }
+                            window.dispatchEvent(new CustomEvent('navigation', { detail: { url: item.href } }))
+                          }, 30)
+                        } catch (error) {
+                          console.error('Settings navigation error:', error)
                         }
                       }}
                       className={classNames(

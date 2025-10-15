@@ -71,19 +71,26 @@ section.hl_wrapper.hl_topbar-tabs,
 
 /* Adjust body margin when CC360 sidebar is present */
 body.cc360-sidebar-active {
-  margin-left: 320px;
+  margin-left: 320px !important;
   transition: margin-left 0.2s ease-in-out;
 }
 
 body.cc360-sidebar-collapsed {
-  margin-left: 64px;
+  margin-left: 64px !important;
   transition: margin-left 0.2s ease-in-out;
 }
 
-/* Reset margin for elements that should be full width */
+/* Ensure main container doesn't add extra margin */
 body.cc360-sidebar-active #app-container,
-body.cc360-sidebar-collapsed #app-container {
+body.cc360-sidebar-collapsed #app-container,
+body.cc360-sidebar-active > div,
+body.cc360-sidebar-collapsed > div {
   margin-left: 0 !important;
+}
+
+/* Fix header z-index to appear below sidebar */
+body[data-agency-page="false"] header.hl_header {
+  z-index: 999 !important;
 }
 
 /* Load Font Awesome for chevron icons */
