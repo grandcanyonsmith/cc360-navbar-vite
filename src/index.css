@@ -27,20 +27,28 @@
   background: #9ca3af;
 }
 
-/* Hide native GHL sidebar and adjust body margin for CC360 sidebar */
+/* Hide native GHL sidebar and header */
 aside#sidebar-v2,
 .lead-connector,
 aside[class*="sidebar"],
 aside[class*="nav"],
 nav[class*="sidebar"],
 .hl_nav-header,
-.hl_nav-settings {
+.hl_nav-settings,
+header.hl_header {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   width: 0 !important;
   height: 0 !important;
   overflow: hidden !important;
+}
+
+/* Remove top padding from main content areas */
+#location-dashboard,
+div[id*="location-"],
+.h-screen {
+  padding-top: 0 !important;
 }
 
 /* Adjust body margin when CC360 sidebar is present */
