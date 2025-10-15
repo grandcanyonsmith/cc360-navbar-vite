@@ -72,7 +72,7 @@ const getNavigation = (): NavItem[] => {
       iconOutline: AcademicCapIcon,
       iconSolid: AcademicCapIconSolid,
       iconMini: AcademicCapIconMini,
-      href: `${base}/memberships/client-portal/dashboard`,
+      href: `${base}/memberships/courses/dashboard-v2`,
     },
     {
       name: 'Conversations',
