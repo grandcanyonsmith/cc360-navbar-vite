@@ -137,7 +137,7 @@ const isSettingsPage = (): boolean => {
   const path = window.location.pathname
   // Settings pages
   if (path.includes('/settings/') || path.includes('/crm-settings')) return true
-  // Moved pages that should show settings menu
+  // Moved pages that should show settings menu (not including memberships/courses)
   if (path.includes('/launchpad')) return true
   if (path.includes('/dashboard')) return true
   if (path.includes('/ai-agents')) return true
@@ -206,44 +206,45 @@ export default function Sidebar() {
   const [activeSettingsItem, setActiveSettingsItem] = useState(() => {
     const path = window.location.pathname
     
-    // Check if on settings page
-    if (isSettingsPage()) {
-      if (path.includes('/whatsapp')) return 'WhatsApp'
-      if (path.includes('/conversation-ai')) return 'Conversation AI'
-      if (path.includes('/knowledge-base')) return 'Knowledge Base'
-      if (path.includes('/ai-agents') && path.includes('/settings/')) return 'Voice AI Agents'
-      if (path.includes('/smtp_service')) return 'Email Services'
-      if (path.includes('/phone_number')) return 'Phone Numbers'
-      if (path.includes('/automation') && path.includes('/settings/')) return 'Automation'
-      if (path.includes('/calendars') && path.includes('/settings/')) return 'Calendars'
-      if (path.includes('/company-billing')) return 'Billing'
-      if (path.includes('/staff')) return 'My Staff'
-      if (path.includes('/company')) return 'Business Profile'
-      if (path.includes('/crm-settings')) return 'Opportunities & Pipelines'
-      if (path.includes('/objects')) return 'Objects'
-      if (path.includes('/fields')) return 'Custom Fields'
-      if (path.includes('/custom_values')) return 'Custom Values'
-      if (path.includes('/scoring')) return 'Manage Scoring'
-      if (path.includes('/domain')) return 'Domains & URL Redirects'
-      if (path.includes('/external-tracking')) return 'External Tracking'
-      if (path.includes('/integrations')) return 'Integrations'
-      if (path.includes('/private-integrations')) return 'Private Integrations'
-      if (path.includes('/conversation_providers')) return 'Conversation Providers'
-      if (path.includes('/tags')) return 'Tags'
-      if (path.includes('/labs')) return 'Labs'
-      if (path.includes('/audit')) return 'Audit Logs'
-      if (path.includes('/brand-boards')) return 'Brand Boards'
-    } else {
-      // Check if on moved pages (these open settings menu)
-      if (path.includes('/launchpad')) return 'Launchpad'
-      if (path.includes('/dashboard')) return 'Dashboard'
-      if (path.includes('/ai-agents')) return 'AI Agents'
-      if (path.includes('/media-storage')) return 'Media Storage'
-      if (path.includes('/opportunities')) return 'Opportunities'
-      if (path.includes('/reputation')) return 'Reputation'
-      if (path.includes('/reporting')) return 'Reporting'
-      if (path.includes('/integration')) return 'App Marketplace'
-    }
+    // Only set active settings item if actually on a settings-related page
+    if (!isSettingsPage()) return ''
+    
+    // Check which settings page we're on
+    if (path.includes('/whatsapp')) return 'WhatsApp'
+    if (path.includes('/conversation-ai')) return 'Conversation AI'
+    if (path.includes('/knowledge-base')) return 'Knowledge Base'
+    if (path.includes('/ai-agents') && path.includes('/settings/')) return 'Voice AI Agents'
+    if (path.includes('/smtp_service')) return 'Email Services'
+    if (path.includes('/phone_number')) return 'Phone Numbers'
+    if (path.includes('/automation') && path.includes('/settings/')) return 'Automation'
+    if (path.includes('/calendars') && path.includes('/settings/')) return 'Calendars'
+    if (path.includes('/company-billing')) return 'Billing'
+    if (path.includes('/staff')) return 'My Staff'
+    if (path.includes('/company')) return 'Business Profile'
+    if (path.includes('/crm-settings')) return 'Opportunities & Pipelines'
+    if (path.includes('/objects')) return 'Objects'
+    if (path.includes('/fields')) return 'Custom Fields'
+    if (path.includes('/custom_values')) return 'Custom Values'
+    if (path.includes('/scoring')) return 'Manage Scoring'
+    if (path.includes('/domain')) return 'Domains & URL Redirects'
+    if (path.includes('/external-tracking')) return 'External Tracking'
+    if (path.includes('/integrations')) return 'Integrations'
+    if (path.includes('/private-integrations')) return 'Private Integrations'
+    if (path.includes('/conversation_providers')) return 'Conversation Providers'
+    if (path.includes('/tags')) return 'Tags'
+    if (path.includes('/labs')) return 'Labs'
+    if (path.includes('/audit')) return 'Audit Logs'
+    if (path.includes('/brand-boards')) return 'Brand Boards'
+    // Check moved pages
+    if (path.includes('/launchpad')) return 'Launchpad'
+    if (path.includes('/dashboard')) return 'Dashboard'
+    if (path.includes('/ai-agents')) return 'AI Agents'
+    if (path.includes('/media-storage')) return 'Media Storage'
+    if (path.includes('/opportunities')) return 'Opportunities'
+    if (path.includes('/reputation')) return 'Reputation'
+    if (path.includes('/reporting')) return 'Reporting'
+    if (path.includes('/integration')) return 'App Marketplace'
+    
     return ''
   })
   const sidebarRef = useRef<HTMLDivElement>(null)
@@ -339,8 +340,8 @@ export default function Sidebar() {
         else if (path.includes('/labs')) setActiveSettingsItem('Labs')
         else if (path.includes('/audit')) setActiveSettingsItem('Audit Logs')
         else if (path.includes('/brand-boards')) setActiveSettingsItem('Brand Boards')
-      } else {
-        // Check if on moved pages
+      } else if (isSettingsPage()) {
+        // Check if on moved pages (that should show settings menu)
         const path = window.location.pathname
         if (path.includes('/launchpad')) setActiveSettingsItem('Launchpad')
         else if (path.includes('/dashboard')) setActiveSettingsItem('Dashboard')
