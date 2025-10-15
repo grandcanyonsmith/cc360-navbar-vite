@@ -384,7 +384,33 @@ export default function Sidebar() {
     if (href && typeof href === 'string' && href.length > 0 && href !== 'undefined') {
       setIsNavigating(true)
       
-      // Use History API for SPA navigation (no page reload)
+      // Special handling for Automation tab - needs two-step navigation
+      if (itemName === 'Automation' && href.includes('/automation/workflows')) {
+        try {
+          // Step 1: Navigate to base automation URL first
+          window.history.pushState({}, '', href)
+          window.dispatchEvent(new PopStateEvent('popstate', { state: {} }))
+          
+          // Step 2: After page initializes, add query parameter
+          setTimeout(() => {
+            const urlWithParam = `${href}?listTab=all`
+            window.history.pushState({}, '', urlWithParam)
+            window.dispatchEvent(new PopStateEvent('popstate', { state: {} }))
+            
+            // Reset navigation lock
+            setTimeout(() => {
+              setIsNavigating(false)
+            }, 500)
+          }, 300)
+        } catch (error) {
+          console.error('Automation navigation error:', error)
+          setIsNavigating(false)
+          window.location.href = href
+        }
+        return
+      }
+      
+      // Normal SPA navigation for other tabs
       try {
         // Update URL first
         window.history.pushState({}, '', href)
