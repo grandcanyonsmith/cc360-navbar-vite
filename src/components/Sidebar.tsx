@@ -158,6 +158,16 @@ const getActiveMenuItemFromUrl = (): string => {
     return ''
   }
   
+  // Special mappings for renamed items
+  if (path.includes('/memberships')) return 'Courses'
+  if (path.includes('/conversations')) return 'Conversations'
+  if (path.includes('/calendars')) return 'Calendars'
+  if (path.includes('/contacts')) return 'Contacts'
+  if (path.includes('/payments')) return 'Payments'
+  if (path.includes('/marketing')) return 'Marketing'
+  if (path.includes('/automation')) return 'Automation'
+  if (path.includes('/funnels-websites') || path.includes('/sites')) return 'Sites'
+  
   const navigation = getNavigation()
   
   // Find matching menu item by checking if the current path includes the href
@@ -175,8 +185,8 @@ const getActiveMenuItemFromUrl = (): string => {
     }
   }
   
-  // Default to Dashboard if no match
-  return 'Dashboard'
+  // Default to empty string if no match
+  return ''
 }
 
 export default function Sidebar() {
