@@ -28,63 +28,102 @@ interface NavItem {
   }[];
 }
 
-const navigation: NavItem[] = [
-  {
-    name: 'Onboarding',
-    icon: AcademicCapIcon,
+// Get location ID from window or use default
+const getLocationId = () => {
+  // You can set window.GHL_LOCATION_ID in your page to customize this
+  return (window as any).GHL_LOCATION_ID || 'xxL6tWuwIRMdpVJvUAX5'
+}
 
-    children: [
-      { name: 'Get Started', href: '#get-started' },
-      { name: '90-Min Bootcamp', href: '#bootcamp' },
-      { name: 'Change Subscription', href: '#subscription' },
-    ],
-  },
-  {
-    name: 'Dashboard & CRM',
-    icon: HomeIcon,
+const getNavigation = (): NavItem[] => {
+  const locationId = getLocationId()
+  const base = `/v2/location/${locationId}`
+  
+  return [
+    {
+      name: 'Launchpad',
+      icon: HomeIcon,
+      href: `${base}/launchpad`,
+    },
+    {
+      name: 'Dashboard',
+      icon: ChartBarIcon,
+      href: `${base}/dashboard`,
+      current: true,
+    },
+    {
+      name: 'Conversations',
+      icon: MegaphoneIcon,
+      href: `${base}/conversations/conversations`,
+    },
+    {
+      name: 'Calendars',
+      icon: AcademicCapIcon,
+      href: `${base}/calendars/view`,
+    },
+    {
+      name: 'Contacts',
+      icon: HomeIcon,
+      href: `${base}/contacts/smart_list/All`,
+    },
+    {
+      name: 'Opportunities',
+      icon: ChartBarIcon,
+      href: `${base}/opportunities/list`,
+    },
+    {
+      name: 'Payments',
+      icon: HomeIcon,
+      href: `${base}/payments/invoices`,
+    },
+    {
+      name: 'AI Agents',
+      icon: GlobeAltIcon,
+      href: `${base}/ai-agents/getting-started`,
+    },
+    {
+      name: 'Marketing',
+      icon: MegaphoneIcon,
+      href: `${base}/marketing/social-planner`,
+    },
+    {
+      name: 'Automation',
+      icon: Cog6ToothIcon,
+      href: `${base}/automation/workflows`,
+    },
+    {
+      name: 'Sites',
+      icon: GlobeAltIcon,
+      href: `${base}/funnels-websites/funnels`,
+    },
+    {
+      name: 'Memberships',
+      icon: AcademicCapIcon,
+      href: `${base}/memberships/client-portal/dashboard`,
+    },
+    {
+      name: 'Media Storage',
+      icon: HomeIcon,
+      href: `${base}/media-storage`,
+    },
+    {
+      name: 'Reputation',
+      icon: ChartBarIcon,
+      href: `${base}/reputation/overview`,
+    },
+    {
+      name: 'Reporting',
+      icon: ChartBarIcon,
+      href: `${base}/reporting/reports`,
+    },
+    {
+      name: 'App Marketplace',
+      icon: GlobeAltIcon,
+      href: `${base}/integration`,
+    },
+  ]
+}
 
-    children: [
-      { name: 'Dashboard', href: '#dashboard', current: true },
-      { name: 'Conversations', href: '#conversations' },
-      { name: 'Calendars', href: '#calendars' },
-      { name: 'Contacts', href: '#contacts' },
-      { name: 'Opportunities', href: '#opportunities' },
-      { name: 'Payments', href: '#payments' },
-    ],
-  },
-  {
-    name: 'Marketing Tools',
-    icon: MegaphoneIcon,
-
-    children: [
-      { name: 'Marketing', href: '#marketing' },
-      { name: 'Automation', href: '#automation' },
-      { name: 'Email Stats', href: '#email-stats' },
-      { name: 'Reputation', href: '#reputation' },
-    ],
-  },
-  {
-    name: 'Sites & Learning',
-    icon: GlobeAltIcon,
-
-    children: [
-      { name: 'Sites', href: '#sites' },
-      { name: 'Memberships', href: '#memberships' },
-      { name: 'Media Storage', href: '#media-storage' },
-      { name: 'CC360 Template Hub', href: '#template-hub' },
-    ],
-  },
-  {
-    name: 'Insights & Integrations',
-    icon: ChartBarIcon,
-
-    children: [
-      { name: 'Reporting', href: '#reporting' },
-      { name: 'App Marketplace', href: '#marketplace' },
-      { name: 'AI Agents', href: '#ai-agents' },
-    ],
-  },
-]
+const navigation: NavItem[] = getNavigation()
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -147,11 +186,11 @@ export default function Sidebar() {
 
   const handleMenuItemClick = (itemName: string, href?: string) => {
     setActiveMenuItem(itemName)
-    if (href && !sidebarCollapsed) {
-      // Normal navigation
+    if (href) {
+      // Navigate to the URL
       window.location.href = href
     } else if (sidebarCollapsed) {
-      // Expand sidebar first
+      // Expand sidebar if no href
       setSidebarCollapsed(false)
     }
   }
@@ -288,8 +327,7 @@ export default function Sidebar() {
                     {!item.children ? (
                       <a
                         href={item.href}
-                        onClick={(e) => {
-                          e.preventDefault()
+                        onClick={() => {
                           handleMenuItemClick(item.name, item.href)
                         }}
                         className={classNames(
@@ -381,8 +419,7 @@ export default function Sidebar() {
                                     <li key={subItem.name}>
                                       <a
                                         href={subItem.href}
-                                        onClick={(e) => {
-                                          e.preventDefault()
+                                        onClick={() => {
                                           handleMenuItemClick(subItem.name, subItem.href)
                                         }}
                                         className={classNames(

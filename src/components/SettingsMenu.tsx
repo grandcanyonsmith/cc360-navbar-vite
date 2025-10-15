@@ -19,48 +19,61 @@ interface SettingsMenuProps {
   setActiveSettingsItem: (item: string) => void;
 }
 
-const settingsSections: SettingsSection[] = [
-  {
-    title: 'MY BUSINESS',
-    items: [
-      { name: 'Business Profile', href: '#business-profile', icon: BuildingOfficeIcon },
-      { name: 'Billing', href: '#billing', icon: CreditCardIcon },
-      { name: 'My Staff', href: '#staff', icon: UserGroupIcon },
-      { name: 'Opportunities & Pipelines', href: '#pipelines', icon: ChartBarIcon },
-    ],
-  },
-  {
-    title: 'BUSINESS SERVICES',
-    items: [
-      { name: 'Automation', href: '#automation-settings', icon: CogIcon },
-      { name: 'Calendars', href: '#calendars-settings', icon: CalendarIcon },
-      { name: 'Conversation AI', href: '#conversation-ai', icon: ChatBubbleLeftRightIcon, isNew: true },
-      { name: 'Knowledge Base', href: '#knowledge-base', icon: DocumentTextIcon, isNew: true },
-      { name: 'Voice AI Agents', href: '#voice-ai', icon: SparklesIcon },
-      { name: 'Email Services', href: '#email-services', icon: EnvelopeIcon },
-      { name: 'Phone Numbers', href: '#phone-numbers', icon: PhoneIcon },
-      { name: 'WhatsApp', href: '#whatsapp', icon: ChatBubbleBottomCenterTextIcon },
-    ],
-  },
-  {
-    title: 'OTHER SETTINGS',
-    items: [
-      { name: 'Objects', href: '#objects', icon: CubeIcon, isNew: true },
-      { name: 'Custom Fields', href: '#custom-fields', icon: TagIcon },
-      { name: 'Custom Values', href: '#custom-values', icon: TagIcon },
-      { name: 'Manage Scoring', href: '#scoring', icon: ChartBarIcon },
-      { name: 'Domains', href: '#domains', icon: GlobeAltIcon },
-      { name: 'URL Redirects', href: '#redirects', icon: ArrowPathIcon },
-      { name: 'Integrations', href: '#integrations', icon: PuzzlePieceIcon },
-      { name: 'Private Integrations', href: '#private-integrations', icon: PuzzlePieceIcon },
-      { name: 'Conversation Providers', href: '#conversation-providers', icon: ChatBubbleLeftRightIcon },
-      { name: 'Tags', href: '#tags', icon: TagIcon },
-      { name: 'Audit Logs', href: '#audit-logs', icon: ClipboardDocumentListIcon },
-      { name: 'Brand Boards', href: '#brand-boards', icon: PaintBrushIcon, isNew: true },
-      { name: 'Companies', href: '#companies', icon: BuildingStorefrontIcon },
-    ],
-  },
-]
+// Get location ID from window or use default
+const getLocationId = () => {
+  // You can set window.GHL_LOCATION_ID in your page to customize this
+  return (window as any).GHL_LOCATION_ID || 'xxL6tWuwIRMdpVJvUAX5'
+}
+
+const getSettingsSections = (): SettingsSection[] => {
+  const locationId = getLocationId()
+  const base = `/v2/location/${locationId}/settings`
+  
+  return [
+    {
+      title: 'MY BUSINESS',
+      items: [
+        { name: 'Business Profile', href: `${base}/company`, icon: BuildingOfficeIcon },
+        { name: 'Billing', href: `${base}/company-billing/billing`, icon: CreditCardIcon },
+        { name: 'My Staff', href: `${base}/staff/team`, icon: UserGroupIcon },
+        { name: 'Opportunities & Pipelines', href: `/v2/location/${locationId}/crm-settings`, icon: ChartBarIcon },
+      ],
+    },
+    {
+      title: 'BUSINESS SERVICES',
+      items: [
+        { name: 'Automation', href: `${base}/automation`, icon: CogIcon },
+        { name: 'Calendars', href: `${base}/calendars`, icon: CalendarIcon },
+        { name: 'Conversation AI', href: `${base}/conversation-ai-v2`, icon: ChatBubbleLeftRightIcon, isNew: true },
+        { name: 'Knowledge Base', href: `${base}/knowledge-base-settings`, icon: DocumentTextIcon, isNew: true },
+        { name: 'Voice AI Agents', href: `${base}/ai-agents`, icon: SparklesIcon },
+        { name: 'Email Services', href: `${base}/smtp_service`, icon: EnvelopeIcon },
+        { name: 'Phone Numbers', href: `${base}/phone_number`, icon: PhoneIcon },
+        { name: 'WhatsApp', href: `${base}/whatsapp`, icon: ChatBubbleBottomCenterTextIcon },
+      ],
+    },
+    {
+      title: 'OTHER SETTINGS',
+      items: [
+        { name: 'Objects', href: `${base}/objects`, icon: CubeIcon, isNew: true },
+        { name: 'Custom Fields', href: `${base}/fields`, icon: TagIcon },
+        { name: 'Custom Values', href: `${base}/custom_values`, icon: TagIcon },
+        { name: 'Manage Scoring', href: `${base}/scoring`, icon: ChartBarIcon },
+        { name: 'Domains & URL Redirects', href: `${base}/domain`, icon: GlobeAltIcon },
+        { name: 'External Tracking', href: `${base}/external-tracking`, icon: ArrowPathIcon },
+        { name: 'Integrations', href: `${base}/integrations/list`, icon: PuzzlePieceIcon },
+        { name: 'Private Integrations', href: `${base}/private-integrations`, icon: PuzzlePieceIcon },
+        { name: 'Conversation Providers', href: `${base}/conversation_providers`, icon: ChatBubbleLeftRightIcon },
+        { name: 'Tags', href: `${base}/tags`, icon: TagIcon },
+        { name: 'Labs', href: `${base}/labs`, icon: SparklesIcon, isNew: true },
+        { name: 'Audit Logs', href: `${base}/audit/logs`, icon: ClipboardDocumentListIcon },
+        { name: 'Brand Boards', href: `/v2/location/${locationId}/marketing/brand-boards`, icon: PaintBrushIcon, isNew: true },
+      ],
+    },
+  ]
+}
+
+const settingsSections: SettingsSection[] = getSettingsSections()
 
 // Import icons
 import {
@@ -82,8 +95,7 @@ import {
   ArrowPathIcon,
   PuzzlePieceIcon,
   ClipboardDocumentListIcon,
-  PaintBrushIcon,
-  BuildingStorefrontIcon
+  PaintBrushIcon
 } from '@heroicons/react/24/outline'
 
 
@@ -142,9 +154,10 @@ export default function SettingsMenu({ onGoBack, isDarkMode = true, activeSettin
                   <li key={item.name}>
                     <a
                       href={item.href}
-                      onClick={(e) => {
-                        e.preventDefault()
+                      onClick={() => {
                         setActiveSettingsItem(item.name)
+                        // Allow normal navigation - don't prevent default
+                        window.location.href = item.href
                       }}
                       className={classNames(
                         activeSettingsItem === item.name
