@@ -168,16 +168,18 @@ export default function Sidebar() {
     const newCollapsedState = !sidebarCollapsed
     setSidebarCollapsed(newCollapsedState)
     
-    // Dispatch event to notify main app of sidebar state change
-    window.dispatchEvent(new CustomEvent('cc360-sidebar-state-change', {
-      detail: { collapsed: newCollapsedState }
-    }))
-    
     // If collapsing while in settings, go back to main menu
     if (!sidebarCollapsed && showSettings) {
       setShowSettings(false)
     }
   }
+
+  // Dispatch event whenever sidebar state changes
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('cc360-sidebar-state-change', {
+      detail: { collapsed: sidebarCollapsed }
+    }))
+  }, [sidebarCollapsed])
 
   const handleSettingsClick = () => {
     // If sidebar is collapsed, expand it first
