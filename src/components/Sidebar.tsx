@@ -128,9 +128,21 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
+// Function to check if current page is a settings page
+const isSettingsPage = (): boolean => {
+  const path = window.location.pathname
+  return path.includes('/settings/') || path.includes('/crm-settings')
+}
+
 // Function to determine active menu item from URL
 const getActiveMenuItemFromUrl = (): string => {
   const path = window.location.pathname
+  
+  // If on settings page, return empty string (settings menu handles it)
+  if (isSettingsPage()) {
+    return ''
+  }
+  
   const navigation = getNavigation()
   
   // Find matching menu item by checking if the current path includes the href
@@ -154,14 +166,46 @@ const getActiveMenuItemFromUrl = (): string => {
 
 export default function Sidebar() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const [showSettings, setShowSettings] = useState(false)
+  const [showSettings, setShowSettings] = useState(() => isSettingsPage())
   const [searchQuery, setSearchQuery] = useState('')
   const [isDarkMode, setIsDarkMode] = useState(() => {
     // Auto-detect system theme preference
     return window.matchMedia('(prefers-color-scheme: dark)').matches
   })
   const [activeMenuItem, setActiveMenuItem] = useState(() => getActiveMenuItemFromUrl())
-  const [activeSettingsItem, setActiveSettingsItem] = useState('')
+  const [activeSettingsItem, setActiveSettingsItem] = useState(() => {
+    // Get active settings item from URL if on settings page
+    if (isSettingsPage()) {
+      const path = window.location.pathname
+      // Extract the settings page from URL
+      if (path.includes('/whatsapp')) return 'WhatsApp'
+      if (path.includes('/conversation-ai')) return 'Conversation AI'
+      if (path.includes('/knowledge-base')) return 'Knowledge Base'
+      if (path.includes('/ai-agents')) return 'Voice AI Agents'
+      if (path.includes('/smtp_service')) return 'Email Services'
+      if (path.includes('/phone_number')) return 'Phone Numbers'
+      if (path.includes('/automation')) return 'Automation'
+      if (path.includes('/calendars')) return 'Calendars'
+      if (path.includes('/company-billing')) return 'Billing'
+      if (path.includes('/staff')) return 'My Staff'
+      if (path.includes('/company')) return 'Business Profile'
+      if (path.includes('/crm-settings')) return 'Opportunities & Pipelines'
+      if (path.includes('/objects')) return 'Objects'
+      if (path.includes('/fields')) return 'Custom Fields'
+      if (path.includes('/custom_values')) return 'Custom Values'
+      if (path.includes('/scoring')) return 'Manage Scoring'
+      if (path.includes('/domain')) return 'Domains & URL Redirects'
+      if (path.includes('/external-tracking')) return 'External Tracking'
+      if (path.includes('/integrations')) return 'Integrations'
+      if (path.includes('/private-integrations')) return 'Private Integrations'
+      if (path.includes('/conversation_providers')) return 'Conversation Providers'
+      if (path.includes('/tags')) return 'Tags'
+      if (path.includes('/labs')) return 'Labs'
+      if (path.includes('/audit')) return 'Audit Logs'
+      if (path.includes('/brand-boards')) return 'Brand Boards'
+    }
+    return ''
+  })
   const sidebarRef = useRef<HTMLDivElement>(null)
 
   const handleSidebarToggle = () => {
@@ -219,7 +263,39 @@ export default function Sidebar() {
   // Update active menu item when URL changes
   useEffect(() => {
     const handleLocationChange = () => {
+      const isSettings = isSettingsPage()
+      setShowSettings(isSettings)
       setActiveMenuItem(getActiveMenuItemFromUrl())
+      
+      // Update active settings item if on settings page
+      if (isSettings) {
+        const path = window.location.pathname
+        if (path.includes('/whatsapp')) setActiveSettingsItem('WhatsApp')
+        else if (path.includes('/conversation-ai')) setActiveSettingsItem('Conversation AI')
+        else if (path.includes('/knowledge-base')) setActiveSettingsItem('Knowledge Base')
+        else if (path.includes('/ai-agents')) setActiveSettingsItem('Voice AI Agents')
+        else if (path.includes('/smtp_service')) setActiveSettingsItem('Email Services')
+        else if (path.includes('/phone_number')) setActiveSettingsItem('Phone Numbers')
+        else if (path.includes('/automation')) setActiveSettingsItem('Automation')
+        else if (path.includes('/calendars')) setActiveSettingsItem('Calendars')
+        else if (path.includes('/company-billing')) setActiveSettingsItem('Billing')
+        else if (path.includes('/staff')) setActiveSettingsItem('My Staff')
+        else if (path.includes('/company')) setActiveSettingsItem('Business Profile')
+        else if (path.includes('/crm-settings')) setActiveSettingsItem('Opportunities & Pipelines')
+        else if (path.includes('/objects')) setActiveSettingsItem('Objects')
+        else if (path.includes('/fields')) setActiveSettingsItem('Custom Fields')
+        else if (path.includes('/custom_values')) setActiveSettingsItem('Custom Values')
+        else if (path.includes('/scoring')) setActiveSettingsItem('Manage Scoring')
+        else if (path.includes('/domain')) setActiveSettingsItem('Domains & URL Redirects')
+        else if (path.includes('/external-tracking')) setActiveSettingsItem('External Tracking')
+        else if (path.includes('/integrations')) setActiveSettingsItem('Integrations')
+        else if (path.includes('/private-integrations')) setActiveSettingsItem('Private Integrations')
+        else if (path.includes('/conversation_providers')) setActiveSettingsItem('Conversation Providers')
+        else if (path.includes('/tags')) setActiveSettingsItem('Tags')
+        else if (path.includes('/labs')) setActiveSettingsItem('Labs')
+        else if (path.includes('/audit')) setActiveSettingsItem('Audit Logs')
+        else if (path.includes('/brand-boards')) setActiveSettingsItem('Brand Boards')
+      }
     }
     
     // Listen for popstate (back/forward navigation)
@@ -281,7 +357,7 @@ export default function Sidebar() {
   return (
     <motion.div 
       ref={sidebarRef}
-      className={`flex h-full flex-col ${themeStyles.background} ${themeStyles.text}`}
+      className={`flex h-full flex-col ${themeStyles.background} ${themeStyles.text} relative`}
       initial={false}
       animate={{ 
         width: sidebarCollapsed ? 64 : 320 
@@ -582,41 +658,34 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* Collapse Button - Moves with sidebar */}
-        <motion.div 
-          className="absolute bottom-5 z-50"
-          animate={{ 
-            right: sidebarCollapsed ? -12 : -8
+      </div>
+
+      {/* Collapse Button - Outside bottom section, moves with sidebar */}
+      <div 
+        className="absolute bottom-5 z-50"
+        style={{ right: '-8px' }}
+      >
+        <motion.button
+          onClick={handleSidebarToggle}
+          className={`flex items-center justify-center rounded-full ${themeStyles.text} ${themeStyles.hoverBg} transition-colors`}
+          style={{ 
+            fontSize: '1.5rem',
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer'
           }}
-          transition={{ 
-            duration: 0.2,
-            ease: "easeInOut"
-          }}
+          title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.1 }}
         >
-          <motion.button
-            onClick={handleSidebarToggle}
-            className={`flex items-center justify-center rounded-full ${themeStyles.text} ${themeStyles.hoverBg} transition-colors`}
-            style={{ 
-              fontSize: '1.5rem',
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer'
+          <i
+            className={`fas ${sidebarCollapsed ? 'fa-chevron-circle-right' : 'fa-chevron-circle-left'} rounded-full`}
+            style={{
+              color: isDarkMode ? '#9CA3AF' : '#6B7280',
+              fontSize: '1.5rem'
             }}
-            title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-            whileTap={{ scale: 0.95 }}
-            whileHover={{ scale: 1.1 }}
-          >
-            <motion.i
-              className={`fas ${sidebarCollapsed ? 'fa-chevron-circle-right' : 'fa-chevron-circle-left'} rounded-full`}
-              style={{
-                color: isDarkMode ? '#9CA3AF' : '#6B7280',
-                fontSize: '1.5rem'
-              }}
-              animate={{ rotate: sidebarCollapsed ? 0 : 0 }}
-              transition={{ duration: 0.2 }}
-            />
-          </motion.button>
-        </motion.div>
+          />
+        </motion.button>
       </div>
     </motion.div>
   )
