@@ -45,8 +45,10 @@ function initSidebar() {
     document.body.prepend(container)
   }
 
-  // Set initial body margin (sidebar starts expanded)
-  updateBodyMargin(false)
+  // Set initial body margin based on saved state
+  const savedState = localStorage.getItem('cc360-sidebar-collapsed')
+  const isCollapsed = savedState === 'true'
+  updateBodyMargin(isCollapsed)
 
   // Setup listener for sidebar state changes
   setupSidebarListener()

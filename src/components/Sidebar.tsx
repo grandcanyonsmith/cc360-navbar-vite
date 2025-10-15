@@ -165,7 +165,11 @@ const getActiveMenuItemFromUrl = (): string => {
 }
 
 export default function Sidebar() {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    // Check localStorage for saved state
+    const saved = localStorage.getItem('cc360-sidebar-collapsed')
+    return saved === 'true'
+  })
   const [showSettings, setShowSettings] = useState(() => isSettingsPage())
   const [searchQuery, setSearchQuery] = useState('')
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -218,8 +222,12 @@ export default function Sidebar() {
     }
   }
 
-  // Dispatch event whenever sidebar state changes
+  // Dispatch event and save to localStorage whenever sidebar state changes
   useEffect(() => {
+    // Save state to localStorage
+    localStorage.setItem('cc360-sidebar-collapsed', String(sidebarCollapsed))
+    
+    // Dispatch event for body margin update
     window.dispatchEvent(new CustomEvent('cc360-sidebar-state-change', {
       detail: { collapsed: sidebarCollapsed }
     }))
