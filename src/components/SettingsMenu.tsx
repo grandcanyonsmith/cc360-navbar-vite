@@ -55,6 +55,14 @@ const getSettingsSections = (): SettingsSection[] => {
     {
       title: 'OTHER SETTINGS',
       items: [
+        { name: 'Launchpad', href: `/v2/location/${locationId}/launchpad`, icon: BuildingOfficeIcon },
+        { name: 'Dashboard', href: `/v2/location/${locationId}/dashboard`, icon: ChartBarIcon },
+        { name: 'AI Agents', href: `/v2/location/${locationId}/ai-agents/getting-started`, icon: SparklesIcon },
+        { name: 'Media Storage', href: `/v2/location/${locationId}/media-storage`, icon: CubeIcon },
+        { name: 'Opportunities', href: `/v2/location/${locationId}/opportunities/list`, icon: ChartBarIcon },
+        { name: 'Reputation', href: `/v2/location/${locationId}/reputation/overview`, icon: ChartBarIcon },
+        { name: 'Reporting', href: `/v2/location/${locationId}/reporting/reports`, icon: ChartBarIcon },
+        { name: 'App Marketplace', href: `/v2/location/${locationId}/integration`, icon: PuzzlePieceIcon },
         { name: 'Objects', href: `${base}/objects`, icon: CubeIcon, isNew: true },
         { name: 'Custom Fields', href: `${base}/fields`, icon: TagIcon },
         { name: 'Custom Values', href: `${base}/custom_values`, icon: TagIcon },

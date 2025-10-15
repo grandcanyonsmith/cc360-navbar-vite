@@ -9,7 +9,6 @@ import {
   HomeIcon,
   MegaphoneIcon,
   AcademicCapIcon,
-  ChartBarIcon,
   Cog6ToothIcon,
   GlobeAltIcon,
 } from '@heroicons/react/24/outline'
@@ -40,16 +39,6 @@ const getNavigation = (): NavItem[] => {
   
   return [
     {
-      name: 'Launchpad',
-      icon: HomeIcon,
-      href: `${base}/launchpad`,
-    },
-    {
-      name: 'Dashboard',
-      icon: ChartBarIcon,
-      href: `${base}/dashboard`,
-    },
-    {
       name: 'Conversations',
       icon: MegaphoneIcon,
       href: `${base}/conversations/conversations`,
@@ -65,19 +54,9 @@ const getNavigation = (): NavItem[] => {
       href: `${base}/contacts/smart_list/All`,
     },
     {
-      name: 'Opportunities',
-      icon: ChartBarIcon,
-      href: `${base}/opportunities/list`,
-    },
-    {
       name: 'Payments',
       icon: HomeIcon,
       href: `${base}/payments/invoices`,
-    },
-    {
-      name: 'AI Agents',
-      icon: GlobeAltIcon,
-      href: `${base}/ai-agents/getting-started`,
     },
     {
       name: 'Marketing',
@@ -99,26 +78,6 @@ const getNavigation = (): NavItem[] => {
       icon: AcademicCapIcon,
       href: `${base}/memberships/client-portal/dashboard`,
     },
-    {
-      name: 'Media Storage',
-      icon: HomeIcon,
-      href: `${base}/media-storage`,
-    },
-    {
-      name: 'Reputation',
-      icon: ChartBarIcon,
-      href: `${base}/reputation/overview`,
-    },
-    {
-      name: 'Reporting',
-      icon: ChartBarIcon,
-      href: `${base}/reporting/reports`,
-    },
-    {
-      name: 'App Marketplace',
-      icon: GlobeAltIcon,
-      href: `${base}/integration`,
-    },
   ]
 }
 
@@ -128,10 +87,21 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-// Function to check if current page is a settings page
+// Function to check if current page is a settings page OR moved pages
 const isSettingsPage = (): boolean => {
   const path = window.location.pathname
-  return path.includes('/settings/') || path.includes('/crm-settings')
+  // Settings pages
+  if (path.includes('/settings/') || path.includes('/crm-settings')) return true
+  // Moved pages that should show settings menu
+  if (path.includes('/launchpad')) return true
+  if (path.includes('/dashboard')) return true
+  if (path.includes('/ai-agents')) return true
+  if (path.includes('/media-storage')) return true
+  if (path.includes('/opportunities')) return true
+  if (path.includes('/reputation')) return true
+  if (path.includes('/reporting')) return true
+  if (path.includes('/integration')) return true
+  return false
 }
 
 // Function to determine active menu item from URL
@@ -179,18 +149,18 @@ export default function Sidebar() {
   })
   const [activeMenuItem, setActiveMenuItem] = useState(() => getActiveMenuItemFromUrl())
   const [activeSettingsItem, setActiveSettingsItem] = useState(() => {
-    // Get active settings item from URL if on settings page
+    const path = window.location.pathname
+    
+    // Check if on settings page
     if (isSettingsPage()) {
-      const path = window.location.pathname
-      // Extract the settings page from URL
       if (path.includes('/whatsapp')) return 'WhatsApp'
       if (path.includes('/conversation-ai')) return 'Conversation AI'
       if (path.includes('/knowledge-base')) return 'Knowledge Base'
-      if (path.includes('/ai-agents')) return 'Voice AI Agents'
+      if (path.includes('/ai-agents') && path.includes('/settings/')) return 'Voice AI Agents'
       if (path.includes('/smtp_service')) return 'Email Services'
       if (path.includes('/phone_number')) return 'Phone Numbers'
-      if (path.includes('/automation')) return 'Automation'
-      if (path.includes('/calendars')) return 'Calendars'
+      if (path.includes('/automation') && path.includes('/settings/')) return 'Automation'
+      if (path.includes('/calendars') && path.includes('/settings/')) return 'Calendars'
       if (path.includes('/company-billing')) return 'Billing'
       if (path.includes('/staff')) return 'My Staff'
       if (path.includes('/company')) return 'Business Profile'
@@ -208,6 +178,16 @@ export default function Sidebar() {
       if (path.includes('/labs')) return 'Labs'
       if (path.includes('/audit')) return 'Audit Logs'
       if (path.includes('/brand-boards')) return 'Brand Boards'
+    } else {
+      // Check if on moved pages (these open settings menu)
+      if (path.includes('/launchpad')) return 'Launchpad'
+      if (path.includes('/dashboard')) return 'Dashboard'
+      if (path.includes('/ai-agents')) return 'AI Agents'
+      if (path.includes('/media-storage')) return 'Media Storage'
+      if (path.includes('/opportunities')) return 'Opportunities'
+      if (path.includes('/reputation')) return 'Reputation'
+      if (path.includes('/reporting')) return 'Reporting'
+      if (path.includes('/integration')) return 'App Marketplace'
     }
     return ''
   })
@@ -282,11 +262,11 @@ export default function Sidebar() {
         if (path.includes('/whatsapp')) setActiveSettingsItem('WhatsApp')
         else if (path.includes('/conversation-ai')) setActiveSettingsItem('Conversation AI')
         else if (path.includes('/knowledge-base')) setActiveSettingsItem('Knowledge Base')
-        else if (path.includes('/ai-agents')) setActiveSettingsItem('Voice AI Agents')
+        else if (path.includes('/ai-agents') && path.includes('/settings/')) setActiveSettingsItem('Voice AI Agents')
         else if (path.includes('/smtp_service')) setActiveSettingsItem('Email Services')
         else if (path.includes('/phone_number')) setActiveSettingsItem('Phone Numbers')
-        else if (path.includes('/automation')) setActiveSettingsItem('Automation')
-        else if (path.includes('/calendars')) setActiveSettingsItem('Calendars')
+        else if (path.includes('/automation') && path.includes('/settings/')) setActiveSettingsItem('Automation')
+        else if (path.includes('/calendars') && path.includes('/settings/')) setActiveSettingsItem('Calendars')
         else if (path.includes('/company-billing')) setActiveSettingsItem('Billing')
         else if (path.includes('/staff')) setActiveSettingsItem('My Staff')
         else if (path.includes('/company')) setActiveSettingsItem('Business Profile')
@@ -304,6 +284,17 @@ export default function Sidebar() {
         else if (path.includes('/labs')) setActiveSettingsItem('Labs')
         else if (path.includes('/audit')) setActiveSettingsItem('Audit Logs')
         else if (path.includes('/brand-boards')) setActiveSettingsItem('Brand Boards')
+      } else {
+        // Check if on moved pages
+        const path = window.location.pathname
+        if (path.includes('/launchpad')) setActiveSettingsItem('Launchpad')
+        else if (path.includes('/dashboard')) setActiveSettingsItem('Dashboard')
+        else if (path.includes('/ai-agents')) setActiveSettingsItem('AI Agents')
+        else if (path.includes('/media-storage')) setActiveSettingsItem('Media Storage')
+        else if (path.includes('/opportunities')) setActiveSettingsItem('Opportunities')
+        else if (path.includes('/reputation')) setActiveSettingsItem('Reputation')
+        else if (path.includes('/reporting')) setActiveSettingsItem('Reporting')
+        else if (path.includes('/integration')) setActiveSettingsItem('App Marketplace')
       }
     }
     
