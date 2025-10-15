@@ -135,17 +135,26 @@ function classNames(...classes: string[]) {
 // Function to check if current page is a settings page OR moved pages
 const isSettingsPage = (): boolean => {
   const path = window.location.pathname
+  
+  // Don't show settings menu for courses/memberships pages
+  if (path.includes('/memberships')) return false
+  
   // Settings pages
   if (path.includes('/settings/') || path.includes('/crm-settings')) return true
-  // Moved pages that should show settings menu (not including memberships/courses)
-  if (path.includes('/launchpad')) return true
-  if (path.includes('/dashboard')) return true
-  if (path.includes('/ai-agents')) return true
-  if (path.includes('/media-storage')) return true
-  if (path.includes('/opportunities')) return true
-  if (path.includes('/reputation')) return true
-  if (path.includes('/reporting')) return true
-  if (path.includes('/integration')) return true
+  
+  // Moved pages that should show settings menu - use exact path matching
+  const locationIdPattern = /\/v2\/location\/[^/]+/
+  const basePath = path.replace(locationIdPattern, '')
+  
+  if (basePath === '/launchpad' || basePath.startsWith('/launchpad/')) return true
+  if (basePath === '/dashboard' || basePath.startsWith('/dashboard/')) return true
+  if (basePath.startsWith('/ai-agents/')) return true
+  if (basePath === '/media-storage' || basePath.startsWith('/media-storage/')) return true
+  if (basePath.startsWith('/opportunities/')) return true
+  if (basePath.startsWith('/reputation/')) return true
+  if (basePath.startsWith('/reporting/')) return true
+  if (basePath === '/integration' || basePath.startsWith('/integration/')) return true
+  
   return false
 }
 
