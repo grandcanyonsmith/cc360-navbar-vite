@@ -171,6 +171,7 @@ export default function Sidebar() {
     return saved === 'true'
   })
   const [showSettings, setShowSettings] = useState(() => isSettingsPage())
+  const [showUserMenu, setShowUserMenu] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [isDarkMode, setIsDarkMode] = useState(() => {
     // Auto-detect system theme preference
@@ -326,14 +327,20 @@ export default function Sidebar() {
     }
   }
 
-  // Click outside to collapse (mobile only)
+  // Click outside to collapse (mobile only) and close user menu
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       // Only collapse on mobile (screen width < 768px)
       const isMobile = window.innerWidth < 768
       
-      if (isMobile && sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
-        if (!sidebarCollapsed) {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+        // Close user menu if clicking outside
+        if (showUserMenu) {
+          setShowUserMenu(false)
+        }
+        
+        // Collapse sidebar on mobile
+        if (isMobile && !sidebarCollapsed) {
           setSidebarCollapsed(true)
           if (showSettings) {
             setShowSettings(false)
@@ -346,7 +353,7 @@ export default function Sidebar() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [sidebarCollapsed, showSettings])
+  }, [sidebarCollapsed, showSettings, showUserMenu])
 
   // Theme-based styles
   const themeStyles = {
@@ -640,30 +647,106 @@ export default function Sidebar() {
         </div>
         
         {/* User Profile - Below settings */}
-        <div className={`border-t ${themeStyles.border} px-6 py-4`}>
-          <div className={classNames(
-            'flex items-center',
-            sidebarCollapsed ? 'justify-center' : 'gap-x-4'
-          )}>
-            <img
-              alt=""
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-              className={`h-8 w-8 rounded-full ${isDarkMode ? 'bg-[#1e3a8a]' : 'bg-gray-200'}`}
-            />
-            <AnimatePresence>
-              {!sidebarCollapsed && (
-                <motion.span 
-                  className={`text-sm font-medium ${themeStyles.secondaryText}`}
+        <div className={`border-t ${themeStyles.border} px-6 py-4 relative`}>
+          <div 
+            className={classNames(
+              'flex items-center cursor-pointer',
+              sidebarCollapsed ? 'justify-center' : 'gap-x-4',
+              themeStyles.hoverBg,
+              'rounded-md p-2 transition-colors'
+            )}
+            onClick={() => setShowUserMenu(!showUserMenu)}
+          >
+            {sidebarCollapsed ? (
+              <div 
+                className="h-8 w-8 rounded-full flex items-center justify-center text-white font-semibold text-sm"
+                style={{ backgroundColor: '#A475BD' }}
+              >
+                CS
+              </div>
+            ) : (
+              <>
+                <div 
+                  className="h-8 w-8 rounded-full flex items-center justify-center text-white font-semibold text-sm"
+                  style={{ backgroundColor: '#A475BD' }}
+                >
+                  CS
+                </div>
+                <motion.div
+                  className="flex-1"
                   initial={{ opacity: 0, width: 0 }}
                   animate={{ opacity: 1, width: "auto" }}
                   exit={{ opacity: 0, width: 0 }}
                   transition={{ duration: 0.15 }}
                 >
-                  LaJun M. Cole
-                </motion.span>
-              )}
-            </AnimatePresence>
+                  <div className={`text-sm font-medium ${themeStyles.text}`}>Canyon Smith</div>
+                  <div className={`text-xs ${themeStyles.tertiaryText} truncate`}>canyonfsmith@gmail.com</div>
+                </motion.div>
+              </>
+            )}
           </div>
+
+          {/* User Dropdown Menu */}
+          <AnimatePresence>
+            {showUserMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.15 }}
+                className={`absolute ${sidebarCollapsed ? 'bottom-full left-full ml-2' : 'bottom-full left-6 right-6'} mb-2 ${isDarkMode ? 'bg-[#1e3a8a]' : 'bg-white'} rounded-lg shadow-lg border ${themeStyles.border} overflow-hidden z-50`}
+                style={{ minWidth: sidebarCollapsed ? '200px' : 'auto' }}
+              >
+                {/* User Info Card - Only show when expanded or in dropdown */}
+                {!sidebarCollapsed && (
+                  <>
+                    <div className="px-4 py-3">
+                      <div className="flex items-center gap-x-3">
+                        <div 
+                          className="h-10 w-10 rounded-full flex items-center justify-center text-white font-semibold"
+                          style={{ backgroundColor: '#A475BD' }}
+                        >
+                          CS
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className={`text-sm font-medium ${themeStyles.text}`}>Canyon Smith</div>
+                          <div className={`text-xs ${themeStyles.tertiaryText} truncate`}>canyonfsmith@gmail.com</div>
+                        </div>
+                      </div>
+                    </div>
+                    <hr className={`border-t ${themeStyles.border}`} />
+                  </>
+                )}
+
+                {/* Dropdown Items */}
+                <div className="py-2">
+                  <button
+                    className={`w-full px-4 py-2 text-left text-sm ${themeStyles.text} ${themeStyles.hoverBg} transition-colors flex items-center justify-between`}
+                    onClick={() => {
+                      setShowUserMenu(false)
+                      // Add your login as logic here
+                    }}
+                  >
+                    <span>Login As</span>
+                    <i className="fas fa-chevron-right text-xs"></i>
+                  </button>
+                  
+                  <hr className={`border-t ${themeStyles.border} my-2`} />
+                  
+                  <button
+                    className={`w-full px-4 py-2 text-left text-sm ${themeStyles.text} ${themeStyles.hoverBg} transition-colors`}
+                    onClick={() => {
+                      setShowUserMenu(false)
+                      // Add your signout logic here
+                      window.location.href = '/logout'
+                    }}
+                  >
+                    Signout
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
       </div>
