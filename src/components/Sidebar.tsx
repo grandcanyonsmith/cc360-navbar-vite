@@ -313,59 +313,67 @@ export default function Sidebar() {
     return () => mediaQuery.removeEventListener('change', handleThemeChange)
   }, [])
 
-  // Update active menu item when URL changes
+  // Update active menu item when URL changes - memoized for performance
   useEffect(() => {
     const handleLocationChange = () => {
+      const path = window.location.pathname
       const isSettings = isSettingsPage()
+      
       setShowSettings(isSettings)
       setActiveMenuItem(getActiveMenuItemFromUrl())
       
-      // Update active settings item if on settings page
+      // Update active settings item if on settings-related page
       if (isSettings) {
-        const path = window.location.pathname
-        if (path.includes('/whatsapp')) setActiveSettingsItem('WhatsApp')
-        else if (path.includes('/conversation-ai')) setActiveSettingsItem('Conversation AI')
-        else if (path.includes('/knowledge-base')) setActiveSettingsItem('Knowledge Base')
-        else if (path.includes('/ai-agents') && path.includes('/settings/')) setActiveSettingsItem('Voice AI Agents')
-        else if (path.includes('/smtp_service')) setActiveSettingsItem('Email Services')
-        else if (path.includes('/phone_number')) setActiveSettingsItem('Phone Numbers')
-        else if (path.includes('/automation') && path.includes('/settings/')) setActiveSettingsItem('Automation')
-        else if (path.includes('/calendars') && path.includes('/settings/')) setActiveSettingsItem('Calendars')
-        else if (path.includes('/company-billing')) setActiveSettingsItem('Billing')
-        else if (path.includes('/staff')) setActiveSettingsItem('My Staff')
-        else if (path.includes('/company')) setActiveSettingsItem('Business Profile')
-        else if (path.includes('/crm-settings')) setActiveSettingsItem('Opportunities & Pipelines')
-        else if (path.includes('/objects')) setActiveSettingsItem('Objects')
-        else if (path.includes('/fields')) setActiveSettingsItem('Custom Fields')
-        else if (path.includes('/custom_values')) setActiveSettingsItem('Custom Values')
-        else if (path.includes('/scoring')) setActiveSettingsItem('Manage Scoring')
-        else if (path.includes('/domain')) setActiveSettingsItem('Domains & URL Redirects')
-        else if (path.includes('/external-tracking')) setActiveSettingsItem('External Tracking')
-        else if (path.includes('/integrations')) setActiveSettingsItem('Integrations')
-        else if (path.includes('/private-integrations')) setActiveSettingsItem('Private Integrations')
-        else if (path.includes('/conversation_providers')) setActiveSettingsItem('Conversation Providers')
-        else if (path.includes('/tags')) setActiveSettingsItem('Tags')
-        else if (path.includes('/labs')) setActiveSettingsItem('Labs')
-        else if (path.includes('/audit')) setActiveSettingsItem('Audit Logs')
-        else if (path.includes('/brand-boards')) setActiveSettingsItem('Brand Boards')
-      } else if (isSettingsPage()) {
-        // Check if on moved pages (that should show settings menu)
-        const path = window.location.pathname
-        if (path.includes('/launchpad')) setActiveSettingsItem('Launchpad')
-        else if (path.includes('/dashboard')) setActiveSettingsItem('Dashboard')
-        else if (path.includes('/ai-agents')) setActiveSettingsItem('AI Agents')
-        else if (path.includes('/media-storage')) setActiveSettingsItem('Media Storage')
-        else if (path.includes('/opportunities')) setActiveSettingsItem('Opportunities')
-        else if (path.includes('/reputation')) setActiveSettingsItem('Reputation')
-        else if (path.includes('/reporting')) setActiveSettingsItem('Reporting')
-        else if (path.includes('/integration')) setActiveSettingsItem('App Marketplace')
+        // Settings mapping
+        const settingsMap: Record<string, string> = {
+          '/whatsapp': 'WhatsApp',
+          '/conversation-ai': 'Conversation AI',
+          '/knowledge-base': 'Knowledge Base',
+          '/smtp_service': 'Email Services',
+          '/phone_number': 'Phone Numbers',
+          '/company-billing': 'Billing',
+          '/staff': 'My Staff',
+          '/company': 'Business Profile',
+          '/crm-settings': 'Opportunities & Pipelines',
+          '/objects': 'Objects',
+          '/fields': 'Custom Fields',
+          '/custom_values': 'Custom Values',
+          '/scoring': 'Manage Scoring',
+          '/domain': 'Domains & URL Redirects',
+          '/external-tracking': 'External Tracking',
+          '/integrations': 'Integrations',
+          '/private-integrations': 'Private Integrations',
+          '/conversation_providers': 'Conversation Providers',
+          '/tags': 'Tags',
+          '/labs': 'Labs',
+          '/audit': 'Audit Logs',
+          '/brand-boards': 'Brand Boards',
+          '/launchpad': 'Launchpad',
+          '/dashboard': 'Dashboard',
+          '/ai-agents': path.includes('/settings/') ? 'Voice AI Agents' : 'AI Agents',
+          '/automation': path.includes('/settings/') ? 'Automation' : '',
+          '/calendars': path.includes('/settings/') ? 'Calendars' : '',
+          '/media-storage': 'Media Storage',
+          '/opportunities': 'Opportunities',
+          '/reputation': 'Reputation',
+          '/reporting': 'Reporting',
+          '/integration': 'App Marketplace'
+        }
+        
+        // Find matching setting
+        for (const [key, value] of Object.entries(settingsMap)) {
+          if (path.includes(key) && value) {
+            setActiveSettingsItem(value)
+            break
+          }
+        }
       }
     }
     
     // Listen for popstate (back/forward navigation)
     window.addEventListener('popstate', handleLocationChange)
     
-    // Also check on mount and URL changes
+    // Initial check
     handleLocationChange()
     
     return () => window.removeEventListener('popstate', handleLocationChange)
