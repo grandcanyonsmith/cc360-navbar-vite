@@ -5,16 +5,25 @@ import Sidebar from './components/Sidebar'
 
 // Function to update body margin based on sidebar state
 function updateBodyMargin(isCollapsed: boolean) {
-  if (isCollapsed) {
-    document.body.classList.remove('cc360-sidebar-active')
-    document.body.classList.add('cc360-sidebar-collapsed')
-  } else {
-    document.body.classList.remove('cc360-sidebar-collapsed')
-    document.body.classList.add('cc360-sidebar-active')
-  }
-  
-  // Force browser reflow/repaint to apply margin immediately
-  void document.body.offsetHeight
+  // Use requestAnimationFrame to ensure DOM updates happen
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      if (isCollapsed) {
+        document.body.classList.remove('cc360-sidebar-active')
+        document.body.classList.add('cc360-sidebar-collapsed')
+        document.body.style.marginLeft = '64px'
+      } else {
+        document.body.classList.remove('cc360-sidebar-collapsed')
+        document.body.classList.add('cc360-sidebar-active')
+        document.body.style.marginLeft = '320px'
+      }
+      
+      // Force multiple reflows
+      void document.body.offsetHeight
+      void document.body.clientHeight
+      document.body.getBoundingClientRect()
+    })
+  })
 }
 
 // Listen for sidebar state changes
