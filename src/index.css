@@ -27,21 +27,31 @@
   background: #9ca3af;
 }
 
-/* Hide native GHL sidebar and header - ONLY on location pages (not agency pages) */
+/* Hide native GHL sidebar - ONLY on location pages (not agency pages) */
 body[data-agency-page="false"] aside#sidebar-v2,
 body[data-agency-page="false"] .lead-connector,
 body[data-agency-page="false"] aside[class*="sidebar"],
 body[data-agency-page="false"] aside[class*="nav"],
 body[data-agency-page="false"] nav[class*="sidebar"],
 body[data-agency-page="false"] .hl_nav-header,
-body[data-agency-page="false"] .hl_nav-settings,
-body[data-agency-page="false"] header.hl_header {
+body[data-agency-page="false"] .hl_nav-settings {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   width: 0 !important;
   height: 0 !important;
   overflow: hidden !important;
+}
+
+/* Hide ONLY the header controls (buttons), not the entire header */
+body[data-agency-page="false"] .hl_header--controls,
+body[data-agency-page="false"] #hl_header--copilot-icon,
+body[data-agency-page="false"] .hl_header--dropdown,
+body[data-agency-page="false"] .hl_header--recent-activities,
+body[data-agency-page="false"] #hl_header--help-icon,
+body[data-agency-page="false"] #canny_logs-toggle {
+  display: none !important;
+  visibility: hidden !important;
 }
 
 /* Remove top padding from main content areas - but keep topbar tabs visible */
