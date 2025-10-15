@@ -374,17 +374,25 @@ export default function Sidebar() {
 
   const handleMenuItemClick = (itemName: string, href?: string) => {
     setActiveMenuItem(itemName)
-    if (href) {
+    
+    // Validate href before navigation
+    if (href && typeof href === 'string' && href.length > 0 && href !== 'undefined') {
       // Use History API for SPA navigation (no page reload)
-      window.history.pushState({}, '', href)
-      
-      // Dispatch popstate event to notify GHL's router
-      window.dispatchEvent(new PopStateEvent('popstate', { state: {} }))
-      
-      // Also dispatch a custom navigation event that GHL might listen to
-      window.dispatchEvent(new CustomEvent('navigation', { 
-        detail: { url: href } 
-      }))
+      try {
+        window.history.pushState({}, '', href)
+        
+        // Dispatch popstate event to notify GHL's router
+        window.dispatchEvent(new PopStateEvent('popstate', { state: {} }))
+        
+        // Also dispatch a custom navigation event that GHL might listen to
+        window.dispatchEvent(new CustomEvent('navigation', { 
+          detail: { url: href } 
+        }))
+      } catch (error) {
+        console.error('Navigation error:', error)
+        // Fallback to normal navigation if SPA fails
+        window.location.href = href
+      }
     } else if (sidebarCollapsed) {
       // Expand sidebar if no href
       setSidebarCollapsed(false)

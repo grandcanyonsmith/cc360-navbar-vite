@@ -166,16 +166,25 @@ export default function SettingsMenu({ onGoBack, isDarkMode = true, activeSettin
                         e.preventDefault()
                         setActiveSettingsItem(item.name)
                         
-                        // Use History API for SPA navigation (no page reload)
-                        window.history.pushState({}, '', item.href)
-                        
-                        // Dispatch popstate event to notify GHL's router
-                        window.dispatchEvent(new PopStateEvent('popstate', { state: {} }))
-                        
-                        // Also dispatch a custom navigation event
-                        window.dispatchEvent(new CustomEvent('navigation', { 
-                          detail: { url: item.href } 
-                        }))
+                        // Validate href before navigation
+                        if (item.href && typeof item.href === 'string' && item.href.length > 0 && item.href !== 'undefined') {
+                          try {
+                            // Use History API for SPA navigation (no page reload)
+                            window.history.pushState({}, '', item.href)
+                            
+                            // Dispatch popstate event to notify GHL's router
+                            window.dispatchEvent(new PopStateEvent('popstate', { state: {} }))
+                            
+                            // Also dispatch a custom navigation event
+                            window.dispatchEvent(new CustomEvent('navigation', { 
+                              detail: { url: item.href } 
+                            }))
+                          } catch (error) {
+                            console.error('Navigation error:', error)
+                            // Fallback to normal navigation if SPA fails
+                            window.location.href = item.href
+                          }
+                        }
                       }}
                       className={classNames(
                         activeSettingsItem === item.name
