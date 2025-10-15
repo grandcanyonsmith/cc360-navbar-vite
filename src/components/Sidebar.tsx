@@ -782,6 +782,23 @@ export default function Sidebar() {
                 {/* Dropdown Items */}
                 <div className="py-2">
                   <button
+                    className={`w-full px-4 py-3 text-left text-xs font-medium ${themeStyles.text} ${themeStyles.hoverBg} transition-colors flex items-center cursor-pointer`}
+                    onClick={() => {
+                      setShowUserMenu(false)
+                      window.location.href = '/agency_dashboard'
+                    }}
+                  >
+                    <svg width="29" height="24" viewBox="0 0 29 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
+                      <rect x="0.5" width="28" height="24" rx="12" fill="#667EEA"></rect>
+                      <path d="M13.0005 13L10.5005 10.5L13.0005 8" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                      <path d="M18.5002 16V12.5C18.5002 11.9696 18.2895 11.4609 17.9145 11.0858C17.5394 10.7107 17.0307 10.5 16.5002 10.5H10.5002" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                    </svg>
+                    <span>Switch to Agency View</span>
+                  </button>
+                  
+                  <hr className={`border-t ${themeStyles.border}`} />
+                  
+                  <button
                     className={`w-full px-4 py-2 text-left text-sm ${themeStyles.text} ${themeStyles.hoverBg} transition-colors flex items-center justify-between`}
                     onClick={() => {
                       setShowUserMenu(false)
@@ -792,7 +809,7 @@ export default function Sidebar() {
                     <i className="fas fa-chevron-right text-xs"></i>
                   </button>
                   
-                  <hr className={`border-t ${themeStyles.border} my-2`} />
+                  <hr className={`border-t ${themeStyles.border}`} />
                   
                   <button
                     className={`w-full px-4 py-2 text-left text-sm ${themeStyles.text} ${themeStyles.hoverBg} transition-colors`}
