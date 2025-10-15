@@ -428,7 +428,7 @@ export default function Sidebar() {
   return (
     <motion.div 
       ref={sidebarRef}
-      className={`flex h-full flex-col ${themeStyles.background} ${themeStyles.text} relative`}
+      className={`flex h-full flex-col ${themeStyles.background} ${themeStyles.text} relative overflow-y-auto`}
       initial={false}
       animate={{ 
         width: sidebarCollapsed ? 64 : 320 

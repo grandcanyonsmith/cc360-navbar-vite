@@ -87,7 +87,7 @@ function initSidebar() {
         width: '320px', 
         height: '100vh', 
         zIndex: 1000,
-        overflow: 'hidden'
+        overflow: 'visible'
       }}>
         <Sidebar />
       </div>
