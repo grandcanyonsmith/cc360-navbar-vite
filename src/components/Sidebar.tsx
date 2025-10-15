@@ -142,7 +142,14 @@ export default function Sidebar() {
   const sidebarRef = useRef<HTMLDivElement>(null)
 
   const handleSidebarToggle = () => {
-    setSidebarCollapsed(!sidebarCollapsed)
+    const newCollapsedState = !sidebarCollapsed
+    setSidebarCollapsed(newCollapsedState)
+    
+    // Dispatch event to notify main app of sidebar state change
+    window.dispatchEvent(new CustomEvent('cc360-sidebar-state-change', {
+      detail: { collapsed: newCollapsedState }
+    }))
+    
     // If collapsing while in settings, go back to main menu
     if (!sidebarCollapsed && showSettings) {
       setShowSettings(false)

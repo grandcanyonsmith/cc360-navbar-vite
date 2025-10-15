@@ -3,6 +3,24 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import Sidebar from './components/Sidebar'
 
+// Function to update body margin based on sidebar state
+function updateBodyMargin(isCollapsed: boolean) {
+  if (isCollapsed) {
+    document.body.classList.remove('cc360-sidebar-active')
+    document.body.classList.add('cc360-sidebar-collapsed')
+  } else {
+    document.body.classList.remove('cc360-sidebar-collapsed')
+    document.body.classList.add('cc360-sidebar-active')
+  }
+}
+
+// Listen for sidebar state changes
+function setupSidebarListener() {
+  window.addEventListener('cc360-sidebar-state-change', ((event: CustomEvent) => {
+    updateBodyMargin(event.detail.collapsed)
+  }) as EventListener)
+}
+
 // Automatically mount the sidebar when the script loads
 function initSidebar() {
   // Find or create container for the sidebar
@@ -14,6 +32,12 @@ function initSidebar() {
     container.id = 'cc360-sidebar-root'
     document.body.prepend(container)
   }
+
+  // Set initial body margin (sidebar starts expanded)
+  updateBodyMargin(false)
+
+  // Setup listener for sidebar state changes
+  setupSidebarListener()
 
   // Render the sidebar
   createRoot(container).render(

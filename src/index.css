@@ -26,3 +26,30 @@
 .light-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
 }
+
+/* Hide native GHL sidebar and adjust body margin for CC360 sidebar */
+.lead-connector,
+aside[class*="sidebar"],
+aside[class*="nav"],
+nav[class*="sidebar"],
+.hl_nav-header,
+.hl_nav-settings {
+  display: none !important;
+}
+
+/* Adjust body margin when CC360 sidebar is present */
+body.cc360-sidebar-active {
+  margin-left: 320px;
+  transition: margin-left 0.2s ease-in-out;
+}
+
+body.cc360-sidebar-collapsed {
+  margin-left: 64px;
+  transition: margin-left 0.2s ease-in-out;
+}
+
+/* Reset margin for elements that should be full width */
+body.cc360-sidebar-active #app-container,
+body.cc360-sidebar-collapsed #app-container {
+  margin-left: 0 !important;
+}
