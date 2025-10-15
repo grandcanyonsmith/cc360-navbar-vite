@@ -6,19 +6,48 @@ import {
   Bars3Icon,
   XMarkIcon,
   MagnifyingGlassIcon,
-  HomeIcon,
-  MegaphoneIcon,
-  AcademicCapIcon,
   Cog6ToothIcon,
+  ChatBubbleLeftRightIcon,
+  CalendarDaysIcon,
+  UserGroupIcon,
+  CreditCardIcon,
+  MegaphoneIcon,
+  BoltIcon,
   GlobeAltIcon,
+  AcademicCapIcon,
 } from '@heroicons/react/24/outline'
+
+import {
+  ChatBubbleLeftRightIcon as ChatBubbleLeftRightIconSolid,
+  CalendarDaysIcon as CalendarDaysIconSolid,
+  UserGroupIcon as UserGroupIconSolid,
+  CreditCardIcon as CreditCardIconSolid,
+  MegaphoneIcon as MegaphoneIconSolid,
+  BoltIcon as BoltIconSolid,
+  GlobeAltIcon as GlobeAltIconSolid,
+  AcademicCapIcon as AcademicCapIconSolid,
+} from '@heroicons/react/24/solid'
+
+import {
+  ChatBubbleLeftRightIcon as ChatBubbleLeftRightIconMini,
+  CalendarDaysIcon as CalendarDaysIconMini,
+  UserGroupIcon as UserGroupIconMini,
+  CreditCardIcon as CreditCardIconMini,
+  MegaphoneIcon as MegaphoneIconMini,
+  BoltIcon as BoltIconMini,
+  GlobeAltIcon as GlobeAltIconMini,
+  AcademicCapIcon as AcademicCapIconMini,
+} from '@heroicons/react/20/solid'
+
 import SettingsMenu from './SettingsMenu'
 
 interface NavItem {
   name: string;
   href?: string;
   current?: boolean;
-  icon?: React.ComponentType<{ className?: string }>;
+  iconOutline?: React.ComponentType<{ className?: string }>;
+  iconSolid?: React.ComponentType<{ className?: string }>;
+  iconMini?: React.ComponentType<{ className?: string }>;
   children?: { 
     name: string; 
     href: string; 
@@ -40,42 +69,58 @@ const getNavigation = (): NavItem[] => {
   return [
     {
       name: 'Conversations',
-      icon: MegaphoneIcon,
+      iconOutline: ChatBubbleLeftRightIcon,
+      iconSolid: ChatBubbleLeftRightIconSolid,
+      iconMini: ChatBubbleLeftRightIconMini,
       href: `${base}/conversations/conversations`,
     },
     {
       name: 'Calendars',
-      icon: AcademicCapIcon,
+      iconOutline: CalendarDaysIcon,
+      iconSolid: CalendarDaysIconSolid,
+      iconMini: CalendarDaysIconMini,
       href: `${base}/calendars/view`,
     },
     {
       name: 'Contacts',
-      icon: HomeIcon,
+      iconOutline: UserGroupIcon,
+      iconSolid: UserGroupIconSolid,
+      iconMini: UserGroupIconMini,
       href: `${base}/contacts/smart_list/All`,
     },
     {
       name: 'Payments',
-      icon: HomeIcon,
+      iconOutline: CreditCardIcon,
+      iconSolid: CreditCardIconSolid,
+      iconMini: CreditCardIconMini,
       href: `${base}/payments/invoices`,
     },
     {
       name: 'Marketing',
-      icon: MegaphoneIcon,
+      iconOutline: MegaphoneIcon,
+      iconSolid: MegaphoneIconSolid,
+      iconMini: MegaphoneIconMini,
       href: `${base}/marketing/social-planner`,
     },
     {
       name: 'Automation',
-      icon: Cog6ToothIcon,
+      iconOutline: BoltIcon,
+      iconSolid: BoltIconSolid,
+      iconMini: BoltIconMini,
       href: `${base}/automation/workflows`,
     },
     {
       name: 'Sites',
-      icon: GlobeAltIcon,
+      iconOutline: GlobeAltIcon,
+      iconSolid: GlobeAltIconSolid,
+      iconMini: GlobeAltIconMini,
       href: `${base}/funnels-websites/funnels`,
     },
     {
       name: 'Memberships',
-      icon: AcademicCapIcon,
+      iconOutline: AcademicCapIcon,
+      iconSolid: AcademicCapIconSolid,
+      iconMini: AcademicCapIconMini,
       href: `${base}/memberships/client-portal/dashboard`,
     },
   ]
@@ -469,9 +514,15 @@ export default function Sidebar() {
                         )}
                         title={sidebarCollapsed ? item.name : undefined}
                       >
-                        {item.icon && (
-                          <item.icon className="h-5 w-5 shrink-0" />
-                        )}
+                        {(() => {
+                          const isActive = activeMenuItem === item.name
+                          const IconComponent = sidebarCollapsed 
+                            ? item.iconMini 
+                            : (isActive ? item.iconSolid : item.iconOutline)
+                          return IconComponent ? (
+                            <IconComponent className={sidebarCollapsed ? "h-5 w-5 shrink-0" : "h-6 w-6 shrink-0"} />
+                          ) : null
+                        })()}
                         <AnimatePresence>
                           {!sidebarCollapsed && (
                             <motion.span
@@ -503,9 +554,14 @@ export default function Sidebar() {
                               'flex items-center',
                               sidebarCollapsed ? '' : 'gap-x-3'
                             )}>
-                              {item.icon && (
-                                <item.icon className="h-5 w-5 shrink-0" />
-                              )}
+                              {(() => {
+                                const IconComponent = sidebarCollapsed 
+                                  ? item.iconMini 
+                                  : item.iconOutline
+                                return IconComponent ? (
+                                  <IconComponent className={sidebarCollapsed ? "h-5 w-5 shrink-0" : "h-6 w-6 shrink-0"} />
+                                ) : null
+                              })()}
                               <AnimatePresence>
                                 {!sidebarCollapsed && (
                                   <motion.span
