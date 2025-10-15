@@ -4,26 +4,33 @@ import './index.css'
 import Sidebar from './components/Sidebar'
 
 // Function to update body margin based on sidebar state
-function updateBodyMargin(isCollapsed: boolean) {
-  // Use requestAnimationFrame to ensure DOM updates happen
-  requestAnimationFrame(() => {
+function updateBodyMargin(isCollapsed: boolean, immediate: boolean = false) {
+  const applyMargin = () => {
+    if (isCollapsed) {
+      document.body.classList.remove('cc360-sidebar-active')
+      document.body.classList.add('cc360-sidebar-collapsed')
+      document.body.style.marginLeft = '64px'
+    } else {
+      document.body.classList.remove('cc360-sidebar-collapsed')
+      document.body.classList.add('cc360-sidebar-active')
+      document.body.style.marginLeft = '320px'
+    }
+    
+    // Force multiple reflows
+    void document.body.offsetHeight
+    void document.body.clientHeight
+    document.body.getBoundingClientRect()
+  }
+  
+  if (immediate) {
+    // Apply immediately without animation frames
+    applyMargin()
+  } else {
+    // Use requestAnimationFrame to ensure DOM updates happen
     requestAnimationFrame(() => {
-      if (isCollapsed) {
-        document.body.classList.remove('cc360-sidebar-active')
-        document.body.classList.add('cc360-sidebar-collapsed')
-        document.body.style.marginLeft = '64px'
-      } else {
-        document.body.classList.remove('cc360-sidebar-collapsed')
-        document.body.classList.add('cc360-sidebar-active')
-        document.body.style.marginLeft = '320px'
-      }
-      
-      // Force multiple reflows
-      void document.body.offsetHeight
-      void document.body.clientHeight
-      document.body.getBoundingClientRect()
+      requestAnimationFrame(applyMargin)
     })
-  })
+  }
 }
 
 // Listen for sidebar state changes
@@ -62,10 +69,10 @@ function initSidebar() {
     document.body.prepend(container)
   }
 
-  // Set initial body margin based on saved state
+  // Set initial body margin based on saved state - apply immediately
   const savedState = localStorage.getItem('cc360-sidebar-collapsed')
   const isCollapsed = savedState === 'true'
-  updateBodyMargin(isCollapsed)
+  updateBodyMargin(isCollapsed, true) // immediate = true for initial load
 
   // Setup listener for sidebar state changes
   setupSidebarListener()
