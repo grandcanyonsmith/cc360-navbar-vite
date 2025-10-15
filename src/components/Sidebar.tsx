@@ -481,7 +481,7 @@ export default function Sidebar() {
         )}
       </AnimatePresence>
 
-      {/* Fixed Bottom Section - Settings Icon and User Profile */}
+      {/* Fixed Bottom Section - Settings Icon, User Profile, and Collapse Button */}
       <div className={`border-t ${themeStyles.border}`}>
         {/* Settings Icon - Always in bottom left */}
         <div className="px-6 py-3">
@@ -496,7 +496,7 @@ export default function Sidebar() {
                 : 'flex items-center gap-x-3 w-full px-3 py-2 rounded-md transition-colors'
             )}
             title="Settings"
-                                    whileTap={{ scale: 0.95 }}
+            whileTap={{ scale: 0.95 }}
           >
             <Cog6ToothIcon className="h-5 w-5 shrink-0" />
             <AnimatePresence>
@@ -540,6 +540,33 @@ export default function Sidebar() {
               )}
             </AnimatePresence>
           </div>
+        </div>
+
+        {/* Collapse Button - Bottom right */}
+        <div className={`absolute ${sidebarCollapsed ? 'bottom-5 -right-3' : 'bottom-5 -right-2'} z-50`}>
+          <motion.button
+            onClick={handleSidebarToggle}
+            className={`flex items-center justify-center rounded-full ${themeStyles.text} ${themeStyles.hoverBg} transition-colors`}
+            style={{ 
+              fontSize: '1.5rem',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+            title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.1 }}
+          >
+            <motion.i
+              className={`fas ${sidebarCollapsed ? 'fa-chevron-circle-right' : 'fa-chevron-circle-left'} rounded-full`}
+              style={{
+                color: isDarkMode ? '#9CA3AF' : '#6B7280',
+                fontSize: '1.5rem'
+              }}
+              animate={{ rotate: sidebarCollapsed ? 0 : 0 }}
+              transition={{ duration: 0.2 }}
+            />
+          </motion.button>
         </div>
       </div>
     </motion.div>
