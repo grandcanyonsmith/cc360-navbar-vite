@@ -724,13 +724,15 @@ export default function Sidebar() {
         <div className="px-6 pt-3 pb-2">
           <motion.a
             href="https://courses.coursecreator360.com"
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={(e) => {
+              e.preventDefault()
+              window.location.href = 'https://courses.coursecreator360.com'
+            }}
             className={classNames(
               `${themeStyles.buttonText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
               sidebarCollapsed 
-                ? 'w-full flex justify-center p-2 rounded-md transition-colors'
-                : 'flex items-center gap-x-3 w-full px-3 py-2 rounded-md transition-colors'
+                ? 'w-full flex justify-center p-2 rounded-md transition-colors cursor-pointer'
+                : 'flex items-center gap-x-3 w-full px-3 py-2 rounded-md transition-colors cursor-pointer'
             )}
             title="Affiliate Dashboard"
             whileTap={{ scale: 0.95 }}
