@@ -723,10 +723,10 @@ export default function Sidebar() {
         {/* Affiliate Dashboard - Above Settings */}
         <div className="px-6 pt-3 pb-2">
           <motion.a
-            href="https://courses.coursecreator360.com"
+            href="https://courses.coursecreator360.com/affiliate/campaign"
             onClick={(e) => {
               e.preventDefault()
-              window.location.href = 'https://courses.coursecreator360.com'
+              window.location.href = 'https://courses.coursecreator360.com/affiliate/campaign'
             }}
             className={classNames(
               `${themeStyles.buttonText} ${themeStyles.hoverBg} ${themeStyles.buttonHover}`,
